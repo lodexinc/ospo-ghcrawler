@@ -24,7 +24,7 @@ Graph Navigation:
 
 const request = require('request');
 const moment = require('moment');
-const queue = [{ type: 'repo', url: 'https://api.github.com/repos/Microsoft/painless-config' }];
+const queue = [{ type: 'orgs', url: 'https://api.github.com/user/orgs' }];
 const seen = {};
 
 processNext();
@@ -44,6 +44,10 @@ function processNext() {
         links: []
       };
       switch (crawlRequest.type) {
+        case 'orgs': {
+          processCollection(body, 'login', crawlRequest.context);
+          break;
+        }
         case 'repo': {
           processRepo(body, crawlRequest.context);
           break;
@@ -53,11 +57,11 @@ function processNext() {
           break;
         }
         case 'repos': {
-          processRepos(body, crawlRequest.context);
+          processCollection(body, 'repo', crawlRequest.context);
           break;
         }
         case 'issues': {
-          processIssues(body, crawlRequest.context);
+          processCollection(body, 'issue', crawlRequest.context);
           break;
         }
         case 'issue': {
@@ -72,6 +76,13 @@ function processNext() {
   else {
     setTimeout(processNext, 0);
   }
+}
+
+function processCollection(document, type, context) {
+  document.forEach(item => {
+    queue.push({ type: type, url: item.url, context: context });
+  });
+  return null;
 }
 
 function processRepo(document) {
@@ -90,20 +101,6 @@ function processLogin(document) {
   document._metadata.links.push({ 'siblings': { type: 'siblings', href: 'urn:login' } });
   queue.push({ type: 'repos', url: document.repos_url });
   return document;
-}
-
-function processRepos(document) {
-  document.forEach(repo => {
-    queue.push({ type: 'repo', url: repo.url });
-  });
-  return null;
-}
-
-function processIssues(document, context) {
-  document.forEach(issue => {
-    queue.push({ type: 'issue', url: issue.url, context: context });
-  });
-  return null;
 }
 
 function processIssue(document, context) {
