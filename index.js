@@ -1,4 +1,18 @@
 /*
+Desired Overall Flow:
+If our API rate limit is exceeded delay until it is reset
+If we have called GitHub in the last X milliseconds delay until X milliseconds has elapsed since the last call
+Pop a URL to crawl off the queue
+Query the cache to see if we have retrieved that URL in the last N days, if so discard it
+Perform a GET against the URL
+If it fails (permanently) discard
+If it fails (temporarily) return it to the end of the queue
+If it succeeds:
+  Generate hypermedia links from the response
+  Store the document in the database with the hypermedia links
+  Extract further crawl targets from the response
+  Add the crawl targets to the queue
+
 Graph Navigation:
 * If a link has a type self then search for a match in links.self
 * If a link has a type siblings then search for a match in links.siblings
