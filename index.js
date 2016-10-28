@@ -24,13 +24,15 @@ Graph Navigation:
 
 const request = require('request');
 const moment = require('moment');
-const queue = [{ type: 'orgs', url: 'https://api.github.com/user/orgs' }];
 const seen = {};
+const crawlqueue = require('./lib/crawlqueue');
+const queue = new crawlqueue();
+queue.push({ type: 'orgs', url: 'https://api.github.com/user/orgs' });
 
 processNext();
 
 function processNext() {
-  const crawlRequest = queue.shift();
+  const crawlRequest = queue.pop();
   if (!crawlRequest) {
     return;
   }
