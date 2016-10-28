@@ -26,9 +26,9 @@ function processNext() {
       body._metadata = {
         type: crawlRequest.type,
         url: crawlRequest.url,
-        fetchedAt: moment.utc().toISOString()
+        fetchedAt: moment.utc().toISOString(),
+        links: []
       };
-      body._links = [];
       switch (crawlRequest.type) {
         case 'repo': {
           processRepo(body, crawlRequest.context);
@@ -61,19 +61,19 @@ function processNext() {
 }
 
 function processRepo(document) {
-  document._links.push({ 'self': { type: 'self', 'href': `urn:repo:${document.id}` } });
-  document._links.push({ 'owner': { type: 'self', href: `urn:login:${document.owner.id}` } });
-  document._links.push({ 'parent': { type: 'self', href: `urn:login:${document.owner.id}` } });
-  document._links.push({ 'siblings': { type: 'siblings', href: `urn:login:${document.owner.id}:repos` } });
+  document._metadata.links.push({ 'self': { type: 'self', 'href': `urn:repo:${document.id}` } });
+  document._metadata.links.push({ 'owner': { type: 'self', href: `urn:login:${document.owner.id}` } });
+  document._metadata.links.push({ 'parent': { type: 'self', href: `urn:login:${document.owner.id}` } });
+  document._metadata.links.push({ 'siblings': { type: 'siblings', href: `urn:login:${document.owner.id}:repos` } });
   queue.push({ type: 'login', url: document.owner.url });
   queue.push({ type: 'issues', url: document.issues_url.replace('{/number}', ''), context: {repo: document } });
   return document;
 }
 
 function processLogin(document) {
-  document._links.push({ 'self': { type: 'self', href: `urn:login:${document.id}` } });
-  document._links.push({ 'repos': { type: 'siblings', href: `urn:login:${document.id}:repos` } });
-  document._links.push({ 'siblings': { type: 'siblings', href: 'urn:login' } });
+  document._metadata.links.push({ 'self': { type: 'self', href: `urn:login:${document.id}` } });
+  document._metadata.links.push({ 'repos': { type: 'siblings', href: `urn:login:${document.id}:repos` } });
+  document._metadata.links.push({ 'siblings': { type: 'siblings', href: 'urn:login' } });
   queue.push({ type: 'repos', url: document.repos_url });
   return document;
 }
@@ -93,8 +93,8 @@ function processIssues(document, context) {
 }
 
 function processIssue(document, context) {
-  document._links.push({ 'self': { type: 'self', href: `urn:repo:${context.repo.id}:issue:${document.id}` } });
-  document._links.push({ 'siblings': { type: 'siblings', href: `urn:repo:${context.repo.id}:issues` } });
-  document._links.push({ 'assignees': { type: 'self', hrefs: document.assignees.map(assignee => { return `urn:login:${assignee.id}`}) } });
+  document._metadata.links.push({ 'self': { type: 'self', href: `urn:repo:${context.repo.id}:issue:${document.id}` } });
+  document._metadata.links.push({ 'siblings': { type: 'siblings', href: `urn:repo:${context.repo.id}:issues` } });
+  document._metadata.links.push({ 'assignees': { type: 'self', hrefs: document.assignees.map(assignee => { return `urn:login:${assignee.id}`}) } });
   return document;
 }
