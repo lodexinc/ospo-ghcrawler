@@ -10,15 +10,14 @@ const url = require('url');
 const urlHost = 'https://test.com';
 
 describe('Basic fetcher success', () => {
-  initializeRequestHook();
   it('should be able to get a single page resource', () => {
-    const fetcher = new GitHubFetcher();
+    const fetcher = getFetcher();
     fetcher.get(`${urlHost}/singlePageResource`).then(result => {
       expect(result.id).to.equal('cool object');
     });
   });
   it('should be able to get a multi page resource', () => {
-    const fetcher = new GitHubFetcher();
+    const fetcher = getFetcher();
     return fetcher.getAll(`${urlHost}/twoPageResource`).then(result => {
       expect(result.length).to.equal(2);
       expect(result[0].page).to.equal(1);
@@ -28,7 +27,7 @@ describe('Basic fetcher success', () => {
     });
   });
   it('should retry 500 errors and eventually fail', () => {
-    const fetcher = new GitHubFetcher();
+    const fetcher = getFetcher();
     return fetcher.getAll(`${urlHost}/serverError`).then(result => {
       // TODO what should be the right return value from a 500?
       // The body of the response or the response itself?
@@ -38,30 +37,49 @@ describe('Basic fetcher success', () => {
     });
   });
   it('should retry 500 errors and eventually succeed', () => {
-    const fetcher = new GitHubFetcher();
+    const fetcher = getFetcher();
     return fetcher.getAll(`${urlHost}/retry500succeed`).then(result => {
       expect(result.id).to.equal(1);
+      expect(fetcher.attempts[0]).to.equal(2);
     }, err => {
       fail();
     });
   });
   it('should retry network errors and eventually fail', () => {
-    const fetcher = new GitHubFetcher();
+    const fetcher = getFetcher();
     return fetcher.getAll(`${urlHost}/networkError`).then(result => {
       fail();
     }, err => {
       expect(err).to.equal('bummer');
+      expect(fetcher.attempts[0]).to.equal(5);
     });
   });
   it('should retry network errors and eventually succeed', () => {
-    const fetcher = new GitHubFetcher();
+    const fetcher = getFetcher();
     return fetcher.getAll(`${urlHost}/retryNetworkErrorSucceed`).then(result => {
       expect(result.id).to.equal(1);
+      expect(fetcher.attempts[0]).to.equal(3);
     }, err => {
       fail();
     });
   });
+  it('should retry only 3 times', (done) => {
+    const fetcher = getFetcher();
+    return fetcher.getAll(`${urlHost}/retryNetworkErrorSucceed`, [], (err, body) => {
+      expect(err).is.equal(null);
+      expect(body.id).to.equal(1);
+      expect(fetcher.attempts[0]).to.equal(3);
+      done();
+    });
+  });
 });
+
+function getFetcher() {
+  initializeRequestHook();
+  return new GitHubFetcher({
+    retryDelay: 10
+  });
+}
 
 function createResponseTable() {
   const responseTable = {
@@ -117,7 +135,10 @@ function initializeRequestHook() {
     }
 
     // finish the call in a timeout to simulate the network call context switch
-    setTimeout(() => { callback(result.error, result.response, result.response.body); }, 0);
+    callback(result.error, result.response, result.response.body);
+    // setTimeout(() => {
+    //   callback(result.error, result.response, result.response.body);
+    // }, 0);
   };
   request.Request.request = hook;
 }
