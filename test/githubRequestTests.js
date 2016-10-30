@@ -3,10 +3,7 @@ const chai = require('chai');
 const expect = require('chai').expect;
 const extend = require('extend');
 const GitHubRequest = require('../lib/githubRequest.js');
-const Q = require('q');
-const querystring = require('querystring');
 const request = require('requestretry');
-const url = require('url');
 
 const urlHost = 'https://test.com';
 
@@ -48,13 +45,21 @@ describe('Request retry and success', () => {
       createMultiPageResponse('twoPageResource', [{ page: 1 }], null, 2),
       createMultiPageResponse('twoPageResource', [{ page: 2 }], 1, null)
     ];
-    const request = createRequest(responses);
+    const requestTracker = [];
+    const request = createRequest(responses, requestTracker);
     return request.getAll(`${urlHost}/twoPageResource`).then(result => {
       expect(result.length).to.equal(2);
       expect(result[0].page).to.equal(1);
       expect(result[1].page).to.equal(2);
       expect(request.activity[0].attempts).to.equal(1);
       expect(request.activity[1].attempts).to.equal(1);
+
+      expect(requestTracker.length).to.equal(2);
+      expect(requestTracker[0]).to.not.include('?page=1');
+      expect(requestTracker[0]).to.not.include('&page=1');
+      expect(requestTracker[0]).to.include('per_page');
+      expect(requestTracker[1]).to.include('page=2');
+      expect(requestTracker[1]).to.include('per_page');
     }, err => {
       assert.fail();
     });
@@ -183,9 +188,9 @@ describe('Request retry and success', () => {
   });
 });
 
-function createRequest(responses) {
+function createRequest(responses, requestTracker = null) {
   // initialize the hook each time to ensure a fresh copy of the response table
-  initializeRequestHook(responses);
+  initializeRequestHook(responses, requestTracker);
   return new GitHubRequest({
     retryDelay: 10,
     forbiddenDelay: 15
@@ -193,9 +198,13 @@ function createRequest(responses) {
 }
 
 // hook the node request object to bypass the actual network sending and do the thing we want.
-function initializeRequestHook(responseList) {
+function initializeRequestHook(responseList, requestTracker = null) {
   const responses = responseList.slice();
   const hook = (options, callback) => {
+    if (requestTracker) {
+      requestTracker.push(options.url);
+    }
+
     // finish the call in a timeout to simulate the network call context switch
     // callback(result.error, result.response, result.response.body);
     setTimeout(() => {
