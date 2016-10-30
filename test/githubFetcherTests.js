@@ -1,4 +1,5 @@
 const chai = require('chai');
+const config = require('painless-config');
 const expect = chai.expect;
 const extend = require('extend');
 const GitHubFetcher = require('../lib/githubFetcher.js');
@@ -77,6 +78,9 @@ describe('Basic fetcher success', () => {
 function getFetcher() {
   initializeRequestHook();
   return new GitHubFetcher({
+    headers: {
+      authorization: `token ${config.get("GITHUB_CRAWLER_TOKEN")}`
+    },
     retryDelay: 10
   });
 }
