@@ -22,10 +22,15 @@ Graph Navigation:
 * Links are unordered
 */
 
-const crawlqueue = require('./lib/crawlqueue');
-const queue = new crawlqueue();
-const crawler = require('./lib/crawler');
+const CrawlQueue = require('./lib/crawlqueue');
+const DocStore = require('./lib/docstore');
+const Crawler = require('./lib/crawler');
+
+const queue = new CrawlQueue();
 queue.push({ type: 'orgs', url: 'https://api.github.com/user/orgs' });
 
-const engine = new crawler(queue);
-engine.start();
+const store = new DocStore('mongodb://localhost:27017/ghcrawler');
+store.connect(() => {
+  const crawler = new Crawler(queue, store);
+  crawler.start();
+});
