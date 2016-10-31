@@ -20,12 +20,22 @@ Graph Navigation:
 * If a link has a href and hrefs then union them together
 * Don't assume that the target of a link exists
 * Links are unordered
+
+Reserved link names:
+* self
+* siblings
+* parent
 */
 
-const crawlqueue = require('./lib/crawlqueue');
-const queue = new crawlqueue();
-const crawler = require('./lib/crawler');
+const CrawlQueue = require('./lib/crawlqueue');
+const MongoDocStore = require('./lib/mongodocstore');
+const Crawler = require('./lib/crawler');
+
+const queue = new CrawlQueue();
 queue.push({ type: 'orgs', url: 'https://api.github.com/user/orgs' });
 
-const engine = new crawler(queue);
-engine.start();
+const store = new MongoDocStore('mongodb://localhost:27017/ghcrawler');
+store.connect(() => {
+  const crawler = new Crawler(queue, store);
+  crawler.start();
+});
