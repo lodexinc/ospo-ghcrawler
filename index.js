@@ -20,6 +20,11 @@ Graph Navigation:
 * If a link has a href and hrefs then union them together
 * Don't assume that the target of a link exists
 * Links are unordered
+
+Reserved link names:
+* self
+* siblings
+* parent
 */
 
 const CrawlQueue = require('./lib/crawlqueue');
