@@ -186,6 +186,32 @@ describe('Request retry and success', () => {
       assert.fail();
     });
   });
+
+  it('should recover after throttling and deliver all pages', () => {
+    const responses = [
+      // createMultiPageResponse(target, body, previous, next, last, code = 200, error = null, remaining = 4000, reset = null) {
+      createMultiPageResponse('pagedWithErrors', [{ page: 1 }], null, 2, 2, null, null, 20, Date.now() + 1000),
+      createMultiPageResponse('pagedWithErrors', [{ page: 2 }], 1, null)
+    ];
+    const request = createRequest(responses);
+    return request.getAll(`${urlHost}`).then(result => {
+      expect(result.length).to.equal(2);
+      expect(result[0].page).to.equal(1);
+      expect(result[1].page).to.equal(2);
+
+      expect(request.activity.length).to.equal(2);
+      const activity0 = request.activity[0];
+      expect(activity0.attempts).to.equal(1);
+      expect(activity0.delays).to.be.undefined;
+      expect(activity0.rateLimitDelay > 0).to.be.true;
+
+      const activity1 = request.activity[1];
+      expect(activity1.attempts).to.equal(1);
+      expect(activity1.delays).to.be.undefined;
+    }, err => {
+      assert.fail();
+    });
+  });
 });
 
 function createRequest(responses, requestTracker = null) {
@@ -193,7 +219,8 @@ function createRequest(responses, requestTracker = null) {
   initializeRequestHook(responses, requestTracker);
   return new GitHubRequest({
     retryDelay: 10,
-    forbiddenDelay: 15
+    forbiddenDelay: 15,
+    mode: 'test'
   });
 }
 
@@ -228,12 +255,13 @@ function createSingleResponse(body, code = 200, remaining = 4000) {
   }
 }
 
-function createMultiPageResponse(target, body, previous, next, last, code = 200, error = null, remaining = 4000) {
+function createMultiPageResponse(target, body, previous, next, last, code = 200, error = null, remaining = 4000, reset = null) {
   return {
     error: error,
     response: {
       headers: {
         'x-ratelimit-remaining': remaining,
+        'x-ratelimit-reset': reset ? reset : 0,
         link: createLinkHeader(target, previous, next, last)
       },
       status: code,
