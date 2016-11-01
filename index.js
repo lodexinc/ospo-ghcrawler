@@ -27,15 +27,22 @@ Reserved link names:
 * parent
 */
 
+const config = require('painless-config');
+const Crawler = require('ghcrawler');
 const CrawlQueue = require('./lib/crawlqueue');
 const MongoDocStore = require('./lib/mongodocstore');
-const Crawler = require('./lib/crawler');
+const requestor = require('ghrequestor');
+const winston = require('winston');
+
+const options = {
+  githubToken: `token ${config.get("GITHUB_CRAWLER_TOKEN")}`
+};
 
 const queue = new CrawlQueue();
 queue.push({ type: 'orgs', url: 'https://api.github.com/user/orgs' });
 
 const store = new MongoDocStore('mongodb://localhost:27017/ghcrawler');
 store.connect(() => {
-  const crawler = new Crawler(queue, store);
+  const crawler = new Crawler(queue, store, requestor, options, winston);
   crawler.start();
 });

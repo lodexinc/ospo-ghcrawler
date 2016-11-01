@@ -1,5 +1,5 @@
 {
-  "name": "ghcrawler",
+  "name": "ospo-ghcrawler",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,12 +8,13 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
+    "ghcrawler": "^0.1.0",
+    "ghrequestor": "^0.1.1",
     "moment": "2.15.2",
     "mongodb": "2.2.11",
     "q": "1.4.1",
-    "request": "2.76.0",
     "winston": "2.2.0"
   }
 }
