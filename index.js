@@ -41,7 +41,8 @@ const options = {
 const queue = new CrawlQueue();
 queue.push({ type: 'orgs', url: 'https://api.github.com/user/orgs' });
 
-const store = new MongoDocStore('mongodb://localhost:27017/ghcrawler');
+// const store = new MongoDocStore('mongodb://localhost:27017/ghcrawler');
+const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
 store.connect(() => {
   const crawler = new Crawler(queue, store, requestor, options, winston);
   crawler.start();
