@@ -10,8 +10,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "ghcrawler": "^0.1.0",
-    "ghrequestor": "^0.1.1",
+    "ghcrawler": "^0.1.2",
+    "ghrequestor": "^0.1.3",
     "moment": "2.15.2",
     "mongodb": "2.2.11",
     "painless-config": "^0.1.0",

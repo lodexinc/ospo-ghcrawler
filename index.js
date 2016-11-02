@@ -35,7 +35,7 @@ const requestor = require('ghrequestor');
 const winston = require('winston');
 
 const options = {
-  githubToken: `token ${config.get("GHCRAWLER_CRAWLER_TOKEN")}`
+  githubToken: `token ${config.get('GHCRAWLER_GITHUB_TOKEN')}`
 };
 
 const queue = new CrawlQueue();
