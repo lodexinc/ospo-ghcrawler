@@ -30,6 +30,8 @@ Reserved link names:
 const config = require('painless-config');
 const Crawler = require('ghcrawler');
 const CrawlQueue = require('./lib/crawlqueue');
+const ServiceBusCrawlQueue = require('./lib/servicebuscrawlqueue');
+const InMemoryCrawlQueue = require('./lib/inmemorycrawlqueue');
 const MongoDocStore = require('./lib/mongodocstore');
 const requestor = require('ghrequestor');
 const winston = require('winston');
@@ -38,11 +40,18 @@ const options = {
   githubToken: `token ${config.get('GHCRAWLER_GITHUB_TOKEN')}`
 };
 
-const queue = new CrawlQueue();
-queue.push({ type: 'orgs', url: 'https://api.github.com/user/orgs' });
-
+const serviceBusUrl = config.get('GHCRAWLER_SERVICEBUS_URL');
+let queue = null;
+if (serviceBusUrl) {
+  queue = new ServiceBusCrawlQueue(config.get('GHCRAWLER_SERVICEBUS_URL'), 'crawlqueue', 'ghcrawler');
+} else {
+  queue = new InMemoryCrawlQueue();
+}
 const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
-store.connect(() => {
-  const crawler = new Crawler(queue, store, requestor, options, winston);
-  crawler.start();
-});
+const crawler = new Crawler(queue, store, requestor, options, winston);
+
+queue.subscribe()
+  .then(() => queue.push('orgs', 'https://api.github.com/user/orgs'))
+  .then(store.connect.bind(store))
+  .then(crawler.start.bind(crawler))
+  .done();
