@@ -34,15 +34,17 @@ const MongoDocStore = require('./lib/mongodocstore');
 const requestor = require('ghrequestor');
 const winston = require('winston');
 
-const options = {
-  githubToken: `token ${config.get('GHCRAWLER_GITHUB_TOKEN')}`
-};
-
 const queue = new CrawlQueue();
 queue.push({ type: 'orgs', url: 'https://api.github.com/user/orgs' });
 
+const requestorInstance = new requestor({
+  headers: {
+    authorization: `token ${config.get('GHCRAWLER_GITHUB_TOKEN')}`
+  }
+});
+
 const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
 store.connect(() => {
-  const crawler = new Crawler(queue, store, requestor, options, winston);
+  const crawler = new Crawler(queue, store, requestorInstance, winston);
   crawler.start();
 });
