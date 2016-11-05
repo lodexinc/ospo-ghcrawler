@@ -36,10 +36,6 @@ const MongoDocStore = require('./lib/mongodocstore');
 const requestor = require('ghrequestor');
 const winston = require('winston');
 
-const options = {
-  githubToken: `token ${config.get('GHCRAWLER_GITHUB_TOKEN')}`
-};
-
 const serviceBusUrl = config.get('GHCRAWLER_SERVICEBUS_URL');
 let queue = null;
 if (serviceBusUrl) {
@@ -47,8 +43,14 @@ if (serviceBusUrl) {
 } else {
   queue = new InMemoryCrawlQueue();
 }
+const requestorInstance = new requestor({
+  headers: {
+    authorization: `token ${config.get('GHCRAWLER_GITHUB_TOKEN')}`
+  }
+});
+
 const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
-const crawler = new Crawler(queue, store, requestor, options, winston);
+const crawler = new Crawler(queue, store, requestorInstance, winston);
 
 queue.subscribe()
   .then(() => queue.push('orgs', 'https://api.github.com/user/orgs'))
