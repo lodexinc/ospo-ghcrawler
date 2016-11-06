@@ -33,6 +33,7 @@ const CrawlQueue = require('./lib/crawlqueue');
 const ServiceBusCrawlQueue = require('./lib/servicebuscrawlqueue');
 const InMemoryCrawlQueue = require('./lib/inmemorycrawlqueue');
 const MongoDocStore = require('./lib/mongodocstore');
+const InmemoryDocStore = require('./lib/inmemoryDocStore');
 const requestor = require('ghrequestor');
 const winston = require('winston');
 
@@ -55,7 +56,9 @@ const requestorInstance = new requestor({
   }
 });
 
-const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
+// const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
+const store = new InmemoryDocStore();
+
 const crawler = new Crawler(queue, store, requestorInstance, winston);
 
 queue.subscribe()

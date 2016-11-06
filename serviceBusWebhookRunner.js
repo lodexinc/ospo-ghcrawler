@@ -17,9 +17,9 @@ const formatter = message => {
   const event = JSON.parse(realMessage.body);
   let qualifier = null;
   if (repoEvents.has(type)) {
-    qualifier = event.repository.full_name.toLowercase();
+    qualifier = event.repository.full_name.toLowerCase();
   } else if (orgEvents.has(type)) {
-    qualifier = event.organization.login.toLowercase();
+    qualifier = event.organization.login.toLowerCase();
   }
   return qualifier ? { type: type, qualifier: qualifier } : null;
 };
