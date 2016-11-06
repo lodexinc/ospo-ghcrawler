@@ -28,7 +28,7 @@ Reserved link names:
 */
 
 const config = require('painless-config');
-const Crawler = require('ghcrawler');
+const Crawler = require('ghcrawler').crawler;
 const CrawlQueue = require('./lib/crawlqueue');
 const ServiceBusCrawlQueue = require('./lib/servicebuscrawlqueue');
 const InMemoryCrawlQueue = require('./lib/inmemorycrawlqueue');
