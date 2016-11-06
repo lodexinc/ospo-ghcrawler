@@ -39,7 +39,13 @@ const winston = require('winston');
 const serviceBusUrl = config.get('GHCRAWLER_SERVICEBUS_URL');
 let queue = null;
 if (serviceBusUrl) {
-  queue = new ServiceBusCrawlQueue(config.get('GHCRAWLER_SERVICEBUS_URL'), 'crawlqueue', 'ghcrawler');
+  const formatter = values => {
+    const message = values[0];
+    const crawlRequest = JSON.parse(message.body);
+    crawlRequest.message = message;
+    return crawlRequest;
+  };
+  queue = new ServiceBusCrawlQueue(config.get('GHCRAWLER_SERVICEBUS_URL'), 'crawlqueue', 'ghcrawler', formatter);
 } else {
   queue = new InMemoryCrawlQueue();
 }
