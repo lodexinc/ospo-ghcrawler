@@ -11,17 +11,17 @@ const finder = require('ghcrawler').eventFinder;
 // the events as { type: type, qualifier: qualifier } if they are relevant
 const repoEvents = new Set(['issues', 'issue_comment', 'push', 'status']);
 const orgEvents = new Set(['membership']);
-const formatter = message => {
-  const realMessage = message[0];
-  const type = realMessage.customProperties.event;
-  const event = JSON.parse(realMessage.body);
+const formatter = values => {
+  const message = values[0];
+  const type = message.customProperties.event;
+  const event = JSON.parse(message.body);
   let qualifier = null;
   if (repoEvents.has(type)) {
     qualifier = event.repository.full_name.toLowerCase();
   } else if (orgEvents.has(type)) {
     qualifier = event.organization.login.toLowerCase();
   }
-  return qualifier ? { type: type, qualifier: qualifier } : null;
+  return qualifier ? { type: type, qualifier: qualifier, message: message } : null;
 };
 const serviceBusUrl = config.get('GHCRAWLER_EVENT_BUS_URL');
 const eventTrigger = new serviceBusQueue(serviceBusUrl, 'webhookevents', 'ghcrawlerdev', formatter);
@@ -41,5 +41,6 @@ const store = mongoUrl ? new MongoDocStore(mongoUrl) : new InmemoryDocStore();
 store.connect().then(() => {
   const eventFinder = new finder(requestorInstance, store);
   const eventSink = new inmemoryQueue();
-  webhookDriver.watch(eventTrigger, eventFinder, eventSink);
-});
+  const driver = new webhookDriver(eventTrigger, eventFinder, eventSink);
+  return driver.start();
+}).done();
