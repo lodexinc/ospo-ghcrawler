@@ -30,6 +30,7 @@ Reserved link names:
 const config = require('painless-config');
 const Crawler = require('ghcrawler').crawler;
 const CrawlQueue = require('./lib/crawlqueue');
+const fs = require('fs');
 const ServiceBusCrawlQueue = require('./lib/servicebuscrawlqueue');
 const InMemoryCrawlQueue = require('./lib/inmemorycrawlqueue');
 const MongoDocStore = require('./lib/mongodocstore');
@@ -50,6 +51,7 @@ if (serviceBusUrl) {
 } else {
   queue = new InMemoryCrawlQueue();
 }
+
 const requestorInstance = new requestor({
   headers: {
     authorization: `token ${config.get('GHCRAWLER_GITHUB_TOKEN')}`
@@ -59,10 +61,24 @@ const requestorInstance = new requestor({
 // const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
 const store = new InmemoryDocStore();
 
-const crawler = new Crawler(queue, store, requestorInstance, winston);
+const options = { orgFilter: loadLines(config.get('GHCRAWLER_ORGS_FILE')) };
+
+const crawler = new Crawler(queue, store, requestorInstance, options, winston);
 
 queue.subscribe()
   .then(() => queue.push('orgs', 'https://api.github.com/user/orgs'))
   .then(store.connect.bind(store))
   .then(crawler.start.bind(crawler))
   .done();
+
+// TODO need to reload from time to time to allow updating of the org filter list when new orgs are discovered.
+// Harder than you'd think.  May be many agents running.  As soon as we discover a new org, we might start
+// seeing events from it.  The agents all need to get the updated filter.
+function loadLines(path) {
+  if (!path || !fs.existsSync(path)) {
+    return new Set();
+  }
+  let result = fs.readFileSync(path, 'utf8');
+  result = result.split(/\s/);
+  return new Set(result.filter(line => { return line; }).map(line => { return line.toLowerCase(); }));
+}
