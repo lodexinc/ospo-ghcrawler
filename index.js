@@ -38,6 +38,7 @@ const InmemoryDocStore = require('./lib/inmemoryDocStore');
 const requestor = require('ghrequestor');
 const winston = require('winston');
 
+// Create queue to crawl.  Use a service bus queue if configured, otherwise, use an in-memory implementation
 const serviceBusUrl = config.get('GHCRAWLER_SERVICEBUS_URL');
 let queue = null;
 if (serviceBusUrl) {
@@ -47,24 +48,29 @@ if (serviceBusUrl) {
     crawlRequest.message = message;
     return crawlRequest;
   };
-  queue = new ServiceBusCrawlQueue(config.get('GHCRAWLER_SERVICEBUS_URL'), 'crawlqueue', 'ghcrawler', formatter);
+  queue = new ServiceBusCrawlQueue(serviceBusUrl, 'crawlqueue', 'ghcrawler', formatter);
 } else {
   queue = new InMemoryCrawlQueue();
 }
 
+// Create a requestor for talking to GitHub API
 const requestorInstance = new requestor({
   headers: {
     authorization: `token ${config.get('GHCRAWLER_GITHUB_TOKEN')}`
   }
 });
 
+// Create the document store.
 // const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
 const store = new InmemoryDocStore();
 
-const options = { orgFilter: loadLines(config.get('GHCRAWLER_ORGS_FILE')) };
+// Gather and configure the crawling options
+const options = {
+  orgFilter: loadLines(config.get('GHCRAWLER_ORGS_FILE'))
+};
 
+// Create a crawler and start it working
 const crawler = new Crawler(queue, store, requestorInstance, options, winston);
-
 queue.subscribe()
   .then(() => queue.push('orgs', 'https://api.github.com/user/orgs'))
   .then(store.connect.bind(store))
