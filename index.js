@@ -40,6 +40,7 @@ const winston = require('winston');
 
 // Create queue to crawl.  Use a service bus queue if configured, otherwise, use an in-memory implementation
 const serviceBusUrl = config.get('GHCRAWLER_SERVICEBUS_URL');
+const serviceBusTopic = config.get('GHCRAWLER_SERVICEBUS_TOPIC') || 'crawlqueue';
 let queue = null;
 if (serviceBusUrl) {
   const formatter = values => {
@@ -48,7 +49,7 @@ if (serviceBusUrl) {
     crawlRequest.message = message;
     return crawlRequest;
   };
-  queue = new ServiceBusCrawlQueue(serviceBusUrl, 'crawlqueue', 'ghcrawler', formatter);
+  queue = new ServiceBusCrawlQueue(serviceBusUrl, serviceBusTopic, 'ghcrawler', formatter);
 } else {
   queue = new InMemoryCrawlQueue();
 }
