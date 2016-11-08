@@ -29,7 +29,6 @@ Reserved link names:
 
 const config = require('painless-config');
 const Crawler = require('ghcrawler').crawler;
-const CrawlQueue = require('./lib/crawlqueue');
 const fs = require('fs');
 const ServiceBusCrawlQueue = require('./lib/servicebuscrawlqueue');
 const InMemoryCrawlQueue = require('./lib/inmemorycrawlqueue');
@@ -55,7 +54,7 @@ if (serviceBusUrl) {
 }
 
 // Create a requestor for talking to GitHub API
-const requestorInstance = new requestor({
+const requestorInstance = requestor.defaults({
   headers: {
     authorization: `token ${config.get('GHCRAWLER_GITHUB_TOKEN')}`
   }
