@@ -28,27 +28,38 @@ Reserved link names:
 */
 
 const config = require('painless-config');
-const Crawler = require('ghcrawler');
+const Crawler = require('ghcrawler').crawler;
 const CrawlQueue = require('./lib/crawlqueue');
 const ServiceBusCrawlQueue = require('./lib/servicebuscrawlqueue');
 const InMemoryCrawlQueue = require('./lib/inmemorycrawlqueue');
 const MongoDocStore = require('./lib/mongodocstore');
+const InmemoryDocStore = require('./lib/inmemoryDocStore');
 const requestor = require('ghrequestor');
 const winston = require('winston');
-
-const options = {
-  githubToken: `token ${config.get('GHCRAWLER_GITHUB_TOKEN')}`
-};
 
 const serviceBusUrl = config.get('GHCRAWLER_SERVICEBUS_URL');
 let queue = null;
 if (serviceBusUrl) {
-  queue = new ServiceBusCrawlQueue(config.get('GHCRAWLER_SERVICEBUS_URL'), 'crawlqueue', 'ghcrawler');
+  const formatter = values => {
+    const message = values[0];
+    const crawlRequest = JSON.parse(message.body);
+    crawlRequest.message = message;
+    return crawlRequest;
+  };
+  queue = new ServiceBusCrawlQueue(config.get('GHCRAWLER_SERVICEBUS_URL'), 'crawlqueue', 'ghcrawler', formatter);
 } else {
   queue = new InMemoryCrawlQueue();
 }
-const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
-const crawler = new Crawler(queue, store, requestor, options, winston);
+const requestorInstance = new requestor({
+  headers: {
+    authorization: `token ${config.get('GHCRAWLER_GITHUB_TOKEN')}`
+  }
+});
+
+// const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
+const store = new InmemoryDocStore();
+
+const crawler = new Crawler(queue, store, requestorInstance, winston);
 
 queue.subscribe()
   .then(() => queue.push('orgs', 'https://api.github.com/user/orgs'))
