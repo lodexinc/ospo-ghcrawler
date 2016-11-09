@@ -61,8 +61,8 @@ const requestorInstance = requestor.defaults({
 });
 
 // Create the document store.
-// const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
-const store = new InmemoryDocStore();
+const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
+// const store = new InmemoryDocStore();
 
 // Gather and configure the crawling options
 const options = {
