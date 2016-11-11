@@ -56,11 +56,13 @@ const crawler = new Crawler(queue, priorityQueue, store, requestorInstance, opti
 const firstRequest = request.create('orgs', 'https://api.github.com/user/orgs');
 firstRequest.force = true;
 firstRequest.context = { qualifier: 'urn:microsoft/orgs' };
-queue.subscribe()
-  .then(() => queue.push(firstRequest))
-  .then(store.connect.bind(store))
-  .then(crawler.start.bind(crawler))
-  .done();
+for (let i = 1; i <= 2; i++) {
+  queue.subscribe()
+    .then(() => queue.push(firstRequest))
+    .then(store.connect.bind(store))
+    .then(crawler.start.bind(crawler))
+    .done();
+}
 
 // TODO need to reload from time to time to allow updating of the org filter list when new orgs are discovered.
 // Harder than you'd think.  May be many agents running.  As soon as we discover a new org, we might start
