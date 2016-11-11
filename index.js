@@ -1,37 +1,9 @@
-/*
-Desired Overall Flow:
-If our API rate limit is exceeded delay until it is reset
-If we have called GitHub in the last X milliseconds delay until X milliseconds has elapsed since the last call
-Pop a URL to crawl off the queue
-Query the cache to see if we have retrieved that URL in the last N days, if so discard it
-Perform a GET against the URL
-If it fails (permanently) discard
-If it fails (temporarily) return it to the end of the queue
-If it succeeds:
-  Generate hypermedia links from the response
-  Store the document in the database with the hypermedia links
-  Extract further crawl targets from the response
-  Add the crawl targets to the queue
-
-Graph Navigation:
-* If a link has a type self then search for a match in links.self
-* If a link has a type siblings then search for a match in links.siblings
-* If a link has a hrefs then search each of the hrefs using the type semantics above
-* If a link has a href and hrefs then union them together
-* Don't assume that the target of a link exists
-* Links are unordered
-
-Reserved link names:
-* self
-* siblings
-* parent
-*/
-
 const aiLogger = require('winston-azure-application-insights').AzureApplicationInsightsLogger;
 const appInsights = require("applicationinsights");
 const config = require('painless-config');
 const Crawler = require('ghcrawler').crawler;
 const fs = require('fs');
+const mockInsights = require('./lib/mockInsights');
 const ServiceBusCrawlQueue = require('./lib/servicebuscrawlqueue');
 const InMemoryCrawlQueue = require('./lib/inmemorycrawlqueue');
 const MongoDocStore = require('./lib/mongodocstore');
@@ -72,7 +44,7 @@ const options = {
   orgFilter: loadLines(config.get('GHCRAWLER_ORGS_FILE'))
 };
 
-setupLogging();
+setupLogging(true);
 
 // Create a crawler and start it working
 const crawler = new Crawler(queue, priorityQueue, store, requestorInstance, options, winston);
@@ -94,35 +66,11 @@ function loadLines(path) {
   return new Set(result.filter(line => { return line; }).map(line => { return line.toLowerCase(); }));
 }
 
-function setupLogging() {
-  setupAppInsights();
+function setupLogging(echo = false) {
+  mockInsights.setup(config.get('GHCRAWLER_INSIGHTS_KEY'), echo);
   winston.add(aiLogger, {
     insights: appInsights,
     treatErrorsAsExceptions: true
   });
   winston.remove(winston.transports.Console);
-}
-
-function setupAppInsights(key) {
-  key = key || config.get('GHCRAWLER_INSIGHTS_KEY');
-  if (!key || key === 'mock') {
-    appInsights.client = new mockInsights();
-  } else {
-    appInsights.setup(key).start();
-  }
-}
-
-function mockInsights() {
-  const self = this;
-  const severities = ['Verbose', 'Info', 'Warning', 'Error', 'Critical'];
-  self.trackEvent = function (name, properties, measurements) { console.log('Event: ' + name + ', properties: ' + JSON.stringify(properties)); };
-  self.trackException = function (exception, properties) { console.error('Exception: ' + exception.message + ', properties: ' + JSON.stringify(properties)); };
-  self.trackMetric = function (name, value, count, min, max, stdDev) { console.log('Metric: ' + name + ' = ' + value); };
-  self.trackRequest = function (request, response, properties) { console.log('Request: '); };
-  self.trackTrace = function (message, severityLevel = 1, properties = null) {
-    const hasProperties = properties && Object.keys(properties).length > 0;
-    const propertyString = hasProperties ? `${JSON.stringify(properties)}` : '';
-    console.log(`Trace: [${severities[severityLevel]}] ${message}${propertyString}`);
-  };
-  self.trackDependency = function (name, commandName, elapsedTimeMs, success, dependencyTypeName, properties, dependencyKind, async, dependencySource) { console.log('Dependency: ' + name); };
 }
