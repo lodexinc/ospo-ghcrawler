@@ -27,9 +27,10 @@ Reserved link names:
 * parent
 */
 
+const aiLogger = require('winston-azure-application-insights').AzureApplicationInsightsLogger;
+const appInsights = require("applicationinsights");
 const config = require('painless-config');
 const Crawler = require('ghcrawler').crawler;
-const CrawlQueue = require('./lib/crawlqueue');
 const fs = require('fs');
 const ServiceBusCrawlQueue = require('./lib/servicebuscrawlqueue');
 const InMemoryCrawlQueue = require('./lib/inmemorycrawlqueue');
@@ -53,27 +54,30 @@ if (serviceBusUrl) {
 } else {
   queue = new InMemoryCrawlQueue();
 }
+const priorityQueue = new InMemoryCrawlQueue();
 
 // Create a requestor for talking to GitHub API
-const requestorInstance = new requestor({
+const requestorInstance = requestor.defaults({
   headers: {
     authorization: `token ${config.get('GHCRAWLER_GITHUB_TOKEN')}`
   }
 });
 
 // Create the document store.
-// const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
-const store = new InmemoryDocStore();
+const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
+// const store = new InmemoryDocStore();
 
 // Gather and configure the crawling options
 const options = {
   orgFilter: loadLines(config.get('GHCRAWLER_ORGS_FILE'))
 };
 
+setupLogging();
+
 // Create a crawler and start it working
-const crawler = new Crawler(queue, store, requestorInstance, options, winston);
+const crawler = new Crawler(queue, priorityQueue, store, requestorInstance, options, winston);
 queue.subscribe()
-  .then(() => queue.push('orgs', 'https://api.github.com/user/orgs'))
+  .then(() => queue.push({ type: 'orgs', url: 'https://api.github.com/user/orgs', force: true, context: { qualifier: 'urn:microsoft/orgs' } }))
   .then(store.connect.bind(store))
   .then(crawler.start.bind(crawler))
   .done();
@@ -88,4 +92,37 @@ function loadLines(path) {
   let result = fs.readFileSync(path, 'utf8');
   result = result.split(/\s/);
   return new Set(result.filter(line => { return line; }).map(line => { return line.toLowerCase(); }));
+}
+
+function setupLogging() {
+  setupAppInsights();
+  winston.add(aiLogger, {
+    insights: appInsights,
+    treatErrorsAsExceptions: true
+  });
+  winston.remove(winston.transports.Console);
+}
+
+function setupAppInsights(key) {
+  key = key || config.get('GHCRAWLER_INSIGHTS_KEY');
+  if (!key || key === 'mock') {
+    appInsights.client = new mockInsights();
+  } else {
+    appInsights.setup(key).start();
+  }
+}
+
+function mockInsights() {
+  const self = this;
+  const severities = ['Verbose', 'Info', 'Warning', 'Error', 'Critical'];
+  self.trackEvent = function (name, properties, measurements) { console.log('Event: ' + name + ', properties: ' + JSON.stringify(properties)); };
+  self.trackException = function (exception, properties) { console.error('Exception: ' + exception.message + ', properties: ' + JSON.stringify(properties)); };
+  self.trackMetric = function (name, value, count, min, max, stdDev) { console.log('Metric: ' + name + ' = ' + value); };
+  self.trackRequest = function (request, response, properties) { console.log('Request: '); };
+  self.trackTrace = function (message, severityLevel = 1, properties = null) {
+    const hasProperties = properties && Object.keys(properties).length > 0;
+    const propertyString = hasProperties ? `${JSON.stringify(properties)}` : '';
+    console.log(`Trace: [${severities[severityLevel]}] ${message}${propertyString}`);
+  };
+  self.trackDependency = function (name, commandName, elapsedTimeMs, success, dependencyTypeName, properties, dependencyKind, async, dependencySource) { console.log('Dependency: ' + name); };
 }
