@@ -8,6 +8,7 @@ const ServiceBusCrawlQueue = require('./lib/servicebuscrawlqueue');
 const InMemoryCrawlQueue = require('./lib/inmemorycrawlqueue');
 const MongoDocStore = require('./lib/mongodocstore');
 const InmemoryDocStore = require('./lib/inmemoryDocStore');
+const request = require('ghcrawler').request;
 const requestor = require('ghrequestor');
 const winston = require('winston');
 
@@ -19,7 +20,11 @@ if (serviceBusUrl) {
   const formatter = values => {
     const message = values[0];
     const crawlRequest = JSON.parse(message.body);
-    crawlRequest.message = message;
+    // convert the loaded object one of our requests and remember the original for disposal
+    // TODO need to test this mechanism
+    crawlRequest.__proto__ = request.prototype;
+    crawlRequest.constructor.call(crawlRequest);
+    crawlRequest._message = message;
     return crawlRequest;
   };
   queue = new ServiceBusCrawlQueue(serviceBusUrl, serviceBusTopic, 'ghcrawler', formatter);
@@ -48,11 +53,16 @@ setupLogging(true);
 
 // Create a crawler and start it working
 const crawler = new Crawler(queue, priorityQueue, store, requestorInstance, options, winston);
-queue.subscribe()
-  .then(() => queue.push({ type: 'orgs', url: 'https://api.github.com/user/orgs', force: true, context: { qualifier: 'urn:microsoft/orgs' } }))
-  .then(store.connect.bind(store))
-  .then(crawler.start.bind(crawler))
-  .done();
+const firstRequest = request.create('orgs', 'https://api.github.com/user/orgs');
+firstRequest.force = true;
+firstRequest.context = { qualifier: 'urn:microsoft/orgs' };
+for (let i = 1; i <= 2; i++) {
+  queue.subscribe()
+    .then(() => queue.push(firstRequest))
+    .then(store.connect.bind(store))
+    .then(crawler.start.bind(crawler))
+    .done();
+}
 
 // TODO need to reload from time to time to allow updating of the org filter list when new orgs are discovered.
 // Harder than you'd think.  May be many agents running.  As soon as we discover a new org, we might start
