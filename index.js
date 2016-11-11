@@ -15,23 +15,10 @@ const winston = require('winston');
 // Create queue to crawl.  Use a service bus queue if configured, otherwise, use an in-memory implementation
 const serviceBusUrl = config.get('GHCRAWLER_SERVICEBUS_URL');
 const serviceBusTopic = config.get('GHCRAWLER_SERVICEBUS_TOPIC') || 'crawlqueue';
-let queue = null;
-if (serviceBusUrl) {
-  const formatter = values => {
-    const message = values[0];
-    const crawlRequest = JSON.parse(message.body);
-    // convert the loaded object one of our requests and remember the original for disposal
-    // TODO need to test this mechanism
-    crawlRequest.__proto__ = request.prototype;
-    crawlRequest.constructor.call(crawlRequest);
-    crawlRequest._message = message;
-    return crawlRequest;
-  };
-  queue = new ServiceBusCrawlQueue(serviceBusUrl, serviceBusTopic, 'ghcrawler', formatter);
-} else {
-  queue = new InMemoryCrawlQueue();
-}
-const priorityQueue = new InMemoryCrawlQueue();
+
+const normalQueue = createQueue(serviceBusUrl, serviceBusTopic + '-normal', 'normal');
+const priorityQueue = createQueue(serviceBusUrl, serviceBusTopic + '-priority', 'priority');
+const deadLetterQueue = createQueue(serviceBusUrl, serviceBusTopic + '-deadletter', 'deadletter');
 
 // Create a requestor for talking to GitHub API
 const requestorInstance = requestor.defaults({
@@ -52,7 +39,7 @@ const options = {
 setupLogging(true);
 
 // Create a crawler and start it working
-const crawler = new Crawler(queue, priorityQueue, store, requestorInstance, options, winston);
+const crawler = new Crawler(queue, priorityQueue, deadletterQueue, store, requestorInstance, options, winston);
 const firstRequest = request.create('orgs', 'https://api.github.com/user/orgs');
 firstRequest.force = true;
 firstRequest.context = { qualifier: 'urn:microsoft/orgs' };
@@ -83,4 +70,21 @@ function setupLogging(echo = false) {
     treatErrorsAsExceptions: true
   });
   winston.remove(winston.transports.Console);
+}
+
+function createQueue(url, topic, subscription) {
+  if (!url) {
+    return new InMemoryCrawlQueue();
+  }
+  const formatter = values => {
+    const message = values[0];
+    const result = JSON.parse(message.body);
+    // convert the loaded object one of our requests and remember the original for disposal
+    // TODO need to test this mechanism
+    result.__proto__ = request.prototype;
+    result.constructor.call(result);
+    result._message = message;
+    return result;
+  };
+  queue = new ServiceBusCrawlQueue(serviceBusUrl, serviceBusTopic, subscription, formatter);
 }
