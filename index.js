@@ -8,6 +8,7 @@ const ServiceBusCrawlQueue = require('./lib/servicebuscrawlqueue');
 const InMemoryCrawlQueue = require('./lib/inmemorycrawlqueue');
 const MongoDocStore = require('./lib/mongodocstore');
 const InmemoryDocStore = require('./lib/inmemoryDocStore');
+const request = require('ghcrawler').request;
 const requestor = require('ghrequestor');
 const winston = require('winston');
 
@@ -19,7 +20,11 @@ if (serviceBusUrl) {
   const formatter = values => {
     const message = values[0];
     const crawlRequest = JSON.parse(message.body);
-    crawlRequest.message = message;
+    // convert the loaded object one of our requests and remember the original for disposal
+    // TODO need to test this mechanism
+    crawlRequest.__proto__ = request.prototype;
+    crawlRequest.constructor.call(crawlRequest);
+    crawlRequest._message = message;
     return crawlRequest;
   };
   queue = new ServiceBusCrawlQueue(serviceBusUrl, serviceBusTopic, 'ghcrawler', formatter);
@@ -48,8 +53,11 @@ setupLogging(true);
 
 // Create a crawler and start it working
 const crawler = new Crawler(queue, priorityQueue, store, requestorInstance, options, winston);
+const firstRequest = request.create('orgs', 'https://api.github.com/user/orgs');
+firstRequest.force = true;
+firstRequest.context = { qualifier: 'urn:microsoft/orgs' };
 queue.subscribe()
-  .then(() => queue.push({ type: 'orgs', url: 'https://api.github.com/user/orgs', force: true, context: { qualifier: 'urn:microsoft/orgs' } }))
+  .then(() => queue.push(firstRequest))
   .then(store.connect.bind(store))
   .then(crawler.start.bind(crawler))
   .done();
