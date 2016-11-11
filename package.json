@@ -18,6 +18,7 @@
     "mongodb": "2.2.11",
     "painless-config": "^0.1.0",
     "q": "1.4.1",
-    "winston": "2.2.0"
+    "winston": "2.2.0",
+    "winston-azure-application-insights": "^1.1.0"
   }
 }
