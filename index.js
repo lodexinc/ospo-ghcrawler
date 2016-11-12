@@ -8,6 +8,9 @@ const ServiceBusCrawlQueue = require('./lib/servicebuscrawlqueue');
 const InMemoryCrawlQueue = require('./lib/inmemorycrawlqueue');
 const MongoDocStore = require('./lib/mongodocstore');
 const InmemoryDocStore = require('./lib/inmemoryDocStore');
+const Q = require('q');
+const redis = require('redis');
+const redlock = require('redlock');
 const request = require('ghcrawler').request;
 const requestor = require('ghrequestor');
 const winston = require('winston');
@@ -31,6 +34,17 @@ const requestorInstance = requestor.defaults({
 const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
 // const store = new InmemoryDocStore();
 
+// Create the locker.
+const redisOptions = { auth_pass: config.get('GHCRAWLER_REDIS_ACCESS_KEY') };
+redisOptions['tls'] = { servername: config.get('GHCRAWLER_REDIS_URL') };
+const redisClient = redis.createClient(6380, config.get('GHCRAWLER_REDIS_URL'), redisOptions);
+
+const locker = new redlock([redisClient], {
+  driftFactor: 0.01,
+  retryCount: 3,
+  retryDelay: 200
+});
+
 // Gather and configure the crawling options
 const options = {
   orgFilter: loadLines(config.get('GHCRAWLER_ORGS_FILE'))
@@ -39,13 +53,13 @@ const options = {
 setupLogging(true);
 
 // Create a crawler and start it working
-const crawler = new Crawler(queue, priorityQueue, deadletterQueue, store, requestorInstance, options, winston);
-const firstRequest = request.create('orgs', 'https://api.github.com/user/orgs');
+const crawler = new Crawler(normalQueue, priorityQueue, deadLetterQueue, store, locker, requestorInstance, options, winston);
+const firstRequest = new request('orgs', 'https://api.github.com/user/orgs');
 firstRequest.force = true;
 firstRequest.context = { qualifier: 'urn:microsoft/orgs' };
 for (let i = 1; i <= 2; i++) {
-  queue.subscribe()
-    .then(() => queue.push(firstRequest))
+  Q.all([normalQueue.subscribe(), priorityQueue.subscribe()])
+    .then(() => normalQueue.push(firstRequest))
     .then(store.connect.bind(store))
     .then(crawler.start.bind(crawler))
     .done();
@@ -82,9 +96,8 @@ function createQueue(url, topic, subscription) {
     // convert the loaded object one of our requests and remember the original for disposal
     // TODO need to test this mechanism
     result.__proto__ = request.prototype;
-    result.constructor.call(result);
     result._message = message;
     return result;
   };
-  queue = new ServiceBusCrawlQueue(serviceBusUrl, serviceBusTopic, subscription, formatter);
+  return new ServiceBusCrawlQueue(serviceBusUrl, serviceBusTopic, subscription, formatter);
 }

@@ -17,7 +17,10 @@
     "moment": "2.15.2",
     "mongodb": "2.2.11",
     "painless-config": "^0.1.0",
+    "promise-retry": "1.1.1",
     "q": "1.4.1",
+    "redis": "2.6.3",
+    "redlock": "2.0.1",
     "winston": "2.2.0",
     "winston-azure-application-insights": "^1.1.0"
   }
