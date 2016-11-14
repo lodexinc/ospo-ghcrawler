@@ -16,6 +16,7 @@ const requestor = require('ghrequestor');
 const winston = require('winston');
 
 // Create queue to crawl.  Use a service bus queue if configured, otherwise, use an in-memory implementation
+// const serviceBusUrl = null;
 const serviceBusUrl = config.get('GHCRAWLER_SERVICEBUS_URL');
 const serviceBusTopic = config.get('GHCRAWLER_SERVICEBUS_TOPIC') || 'crawlqueue';
 
@@ -35,11 +36,11 @@ const store = new MongoDocStore(config.get('GHCRAWLER_MONGO_URL'));
 // const store = new InmemoryDocStore();
 
 // Create the locker.
+// let locker = null;
 const redisOptions = { auth_pass: config.get('GHCRAWLER_REDIS_ACCESS_KEY') };
-redisOptions['tls'] = { servername: config.get('GHCRAWLER_REDIS_URL') };
-const redisClient = redis.createClient(6380, config.get('GHCRAWLER_REDIS_URL'), redisOptions);
-
-const locker = new redlock([redisClient], {
+redisOptions.tls = { servername: config.get('GHCRAWLER_REDIS_URL') };
+const redisClient = redis.createClient(config.get('GHCRAWLER_REDIS_PORT'), config.get('GHCRAWLER_REDIS_URL'), redisOptions);
+locker = new redlock([redisClient], {
   driftFactor: 0.01,
   retryCount: 3,
   retryDelay: 200
@@ -57,12 +58,19 @@ const crawler = new Crawler(normalQueue, priorityQueue, deadLetterQueue, store, 
 const firstRequest = new request('orgs', 'https://api.github.com/user/orgs');
 firstRequest.force = true;
 firstRequest.context = { qualifier: 'urn:microsoft/orgs' };
-for (let i = 1; i <= 2; i++) {
-  Q.all([normalQueue.subscribe(), priorityQueue.subscribe()])
-    .then(() => normalQueue.push(firstRequest))
-    .then(store.connect.bind(store))
-    .then(crawler.start.bind(crawler))
-    .done();
+Q.all([normalQueue.subscribe(), priorityQueue.subscribe()])
+  .then(() => normalQueue.push(firstRequest))
+  .then(store.connect.bind(store))
+  .then(() => start(crawler, 2))
+  .catch(error => console.log(error.stack))
+  .done();
+
+function start(crawler, count) {
+  const promises = [];
+  for (let i = 1; i <= count; i++) {
+    promises.push(crawler.start(i));
+  }
+  return Q.allSettled(promises);
 }
 
 // TODO need to reload from time to time to allow updating of the org filter list when new orgs are discovered.
