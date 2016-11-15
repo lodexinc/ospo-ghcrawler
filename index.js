@@ -58,10 +58,11 @@ const crawler = new Crawler(normalQueue, priorityQueue, deadLetterQueue, store, 
 const firstRequest = new request('orgs', 'https://api.github.com/user/orgs');
 firstRequest.force = true;
 firstRequest.context = { qualifier: 'urn:microsoft/orgs' };
-Q.all([normalQueue.subscribe(), priorityQueue.subscribe()])
+Q.all([normalQueue.unsubscribe(), priorityQueue.unsubscribe()])
+  .then(() => Q.all([normalQueue.subscribe(), priorityQueue.subscribe()]))
   .then(() => normalQueue.push(firstRequest))
   .then(store.connect.bind(store))
-  .then(() => start(crawler, 2))
+  .then(() => start(crawler, 1))
   .catch(error => console.log(error.stack))
   .done();
 
@@ -89,7 +90,8 @@ function setupLogging(echo = false) {
   mockInsights.setup(config.get('GHCRAWLER_INSIGHTS_KEY'), echo);
   winston.add(aiLogger, {
     insights: appInsights,
-    treatErrorsAsExceptions: true
+    treatErrorsAsExceptions: true,
+    level: 'verbose'
   });
   winston.remove(winston.transports.Console);
 }
