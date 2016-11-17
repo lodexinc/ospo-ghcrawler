@@ -5,7 +5,7 @@
       "name": "Crawl",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/index.js",
+      "program": "${workspaceRoot}/runLocal.js",
       "stopOnEntry": false,
       "args": [],
       "cwd": "${workspaceRoot}",
