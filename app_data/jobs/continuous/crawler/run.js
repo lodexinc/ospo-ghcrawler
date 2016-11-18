@@ -1,3 +1,3 @@
-const OspoCrawler = require('../../../lib/ospoCrawler');
+const OspoCrawler = require('../../../../lib/ospoCrawler');
 
-OspoCrawler.run(5);
+OspoCrawler.run(20);
