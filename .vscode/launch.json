@@ -5,7 +5,27 @@
       "name": "Crawl",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/index.js",
+      "program": "${workspaceRoot}/runLocal.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
+      "name": "Run Crawl Job",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/app_data/jobs/continuous/crawler/run.js",
       "stopOnEntry": false,
       "args": [],
       "cwd": "${workspaceRoot}",
