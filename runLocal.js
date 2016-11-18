@@ -2,7 +2,7 @@ const OspoCrawler = require('./lib/ospoCrawler');
 const Crawler = require('ghcrawler').crawler;
 
 const logger = OspoCrawler.createLogger(false, true);
-const queues = OspoCrawler.createServiceBusQueues(logger);
+const queues = OspoCrawler.createAmqpQueues(logger);
 const store = OspoCrawler.createStore();
 const locker = OspoCrawler.createLocker();
 const requestorInstance = OspoCrawler.createRequestor();
