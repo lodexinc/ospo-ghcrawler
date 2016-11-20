@@ -2,6 +2,26 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Web service",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/www.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
       "name": "Crawl",
       "type": "node",
       "request": "launch",
@@ -15,7 +35,7 @@
         "--nolazy"
       ],
       "env": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "localhost"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -35,7 +55,7 @@
         "--nolazy"
       ],
       "env": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "localhost"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -47,7 +67,7 @@
       "request": "launch",
       "program": "${workspaceRoot}/busie.js",
       "stopOnEntry": false,
-      "args": ["ghcrawlerdev"],
+      "args": ["ghcrawlerdev", "amqp"],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
@@ -55,7 +75,7 @@
         "--nolazy"
       ],
       "env": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "localhost"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -75,7 +95,7 @@
         "--nolazy"
       ],
       "env": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "localhost"
       },
       "console": "internalConsole",
       "sourceMaps": false,
