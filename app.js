@@ -1,12 +1,29 @@
-const appInsights = require('./lib/mockInsights');
+const appInsights = require('applicationinsights');
 const auth = require('./middleware/auth');
-const CrawlerService = require('./lib/crawlerService');
+const config = require('painless-config');
+const mockInsights = require('./lib/mockInsights');
+const OspoCrawler = require('./lib/ospoCrawler');
+const CrawlerService = require('ghcrawler').crawlerService;
 const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
 
+mockInsights.setup(config.get('GHCRAWLER_INSIGHTS_KEY'), true);
+
 const crawler = OspoCrawler.createTypicalSetup(config.get('GHCRAWLER_QUEUE_PROVIDER'));
 const service = new CrawlerService(crawler);
+
+const authConfig = {
+  forceAuth: true || config.get('FORCE_AUTH'),
+  sessionSecret: config.get('WITNESS_SESSION_SECRET'),
+  aadConfig: {
+    clientID: config.get('WITNESS_AAD_CLIENT_ID'),
+    clientSecret: config.get('WITNESS_AAD_CLIENT_SECRET'),
+    callbackURL: config.get('WITNESS_AAD_CALLBACK_URL'),
+    resource: config.get('WITNESS_AAD_RESOURCE'),
+    useCommonEndpoint: true
+  }
+};
 
 const app = express();
 
@@ -14,7 +31,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(logger('dev'));
 
-// auth.initialize(app);
+auth.initialize(app, authConfig);
 
 app.use('/config', require('./routes/config')(service));
 app.use('/requests', require('./routes/requests')(service));

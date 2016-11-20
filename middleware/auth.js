@@ -3,28 +3,24 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const redis = require('./retryingRedis');
 const azureAdOAuth2Strategy = require('passport-azure-ad-oauth2');
-const config = require('painless-config');
 const redisStore = require('connect-redis')(expressSession);
 const express = require('express');
 
-function initialize(app) {
+let config = null;
+
+function initialize(app, givenConfig) {
+  config = givenConfig;
   // if running on localhost, don't bother to validate
-  if (config.get('NODE_ENV') === 'localhost' && !config.get('FORCE_AUTH')) {
+  if (process.env.NODE_ENV === 'localhost' && !config.forceAuth) {
     return;
   }
 
-  app.use(expressSession({ store: new redisStore({ client: redis.client, prefix: `${config.get('NODE_ENV')}:session:` }), secret: config.get('WITNESS_SESSION_SECRET'), resave: false, saveUninitialized: false }));
+  // TODO temporarily skip using auth and rely on a token header or local host
+  if (process.env.NODE_ENV) return;
+
+  app.use(expressSession({ store: new redisStore({ client: redis.client, prefix: `${process.env.NODE_ENV}:session:` }), secret: config.sessionSecret, resave: false, saveUninitialized: false }));
   app.use(passport.initialize());
   app.use(passport.session());
-
-  // Configure Passport Module with Azure AD OAuth Strategy.
-  const aadConfig = {
-    clientID: config.get('WITNESS_AAD_CLIENT_ID'),
-    clientSecret: config.get('WITNESS_AAD_CLIENT_SECRET'),
-    callbackURL: config.get('WITNESS_AAD_CALLBACK_URL'),
-    resource: config.get('WITNESS_AAD_RESOURCE'),
-    useCommonEndpoint: true
-  };
 
   function authCallback(accessToken, refreshToken, params, profile, done) {
     const waadProfile = jwt.decode(params.id_token);
@@ -39,7 +35,7 @@ function initialize(app) {
     done(null, user);
   }
 
-  passport.use('aad', new azureAdOAuth2Strategy(aadConfig, authCallback));
+  passport.use('aad', new azureAdOAuth2Strategy(config.aadConfig, authCallback));
 
   passport.serializeUser(function (user, done) {
     done(null, user);
@@ -58,27 +54,32 @@ function initialize(app) {
 }
 exports.initialize = initialize;
 
-function validate(req, res, next) {
+function validate(request, response, next) {
   // if running on localhost, don't bother to validate
-  if (config.get('NODE_ENV') === 'localhost' && !config.get('FORCE_AUTH')) {
+  if (process.env.NODE_ENV === 'localhost' && !config.forceAuth) {
     return next();
   }
 
-  if (req.isAuthenticated()) {
+  // TODO temporary poor man's token management
+  if (request.header('X-token') === 'test1') {
+    return next();
+  }
+
+  if (request.isAuthenticated()) {
     return next();
   }
 
   const authProviders = ['vso'];
-  if ((req.header('X-Witness-FedRedirect') || '').toLowerCase() !== 'suppress') {
-    req.session['redirectTo'] = req.originalUrl;
+  if ((request.header('X-Witness-FedRedirect') || '').toLowerCase() !== 'suppress') {
+    request.session['redirectTo'] = request.originalUrl;
     authProviders.push('aad');
   }
 
-  passport.authenticate(authProviders)(req, res, next);
+  passport.authenticate(authProviders)(request, response, next);
 }
 exports.validate = validate;
 
-function none(req, res, next) {
+function none(request, response, next) {
   return next();
 }
 exports.none = none;

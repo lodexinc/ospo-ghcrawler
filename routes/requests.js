@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post('/', auth.validate, wrap(function* (request, response, next) {
   const body = request.body;
-  yield crawlerService.queue(body);
+  yield crawlerService.crawler.queue(body);
   response.send(201);
 }));
 
