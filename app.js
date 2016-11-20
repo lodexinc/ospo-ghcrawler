@@ -7,6 +7,7 @@ const CrawlerService = require('ghcrawler').crawlerService;
 const express = require('express');
 const logger = require('morgan');
 const bodyParser = require('body-parser');
+const sendHelper = require('./middleware/sendHelper');
 
 mockInsights.setup(config.get('GHCRAWLER_INSIGHTS_KEY'), true);
 
@@ -33,6 +34,7 @@ const app = express();
 // It's safe to set limitation to 2mb.
 app.use(bodyParser.json());
 app.use(logger('dev'));
+app.use(sendHelper());
 
 // auth.initialize(app, authConfig);
 

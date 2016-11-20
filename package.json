@@ -19,6 +19,7 @@
     "express-session": "^1.14.2",
     "ghcrawler": "0.1.5",
     "ghrequestor": "^0.1.6",
+    "htmlencode": "0.0.4",
     "jsonwebtoken": "^7.1.9",
     "memory-cache": "^0.1.6",
     "moment": "2.15.2",
