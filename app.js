@@ -14,6 +14,9 @@ const crawler = OspoCrawler.createTypicalSetup(config.get('GHCRAWLER_QUEUE_PROVI
 const service = new CrawlerService(crawler);
 
 const authConfig = {
+  redisUrl: config.get('GHCRAWLER_REDIS_URL'),
+  redisPort: config.get('GHCRAWLER_REDIS_PORT'),
+  redisAccessKey: config.get('GHCRAWLER_REDIS_ACCESS_KEY'),
   forceAuth: true || config.get('FORCE_AUTH'),
   sessionSecret: config.get('WITNESS_SESSION_SECRET'),
   aadConfig: {

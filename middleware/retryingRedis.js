@@ -1,15 +1,13 @@
 const appInsights = require('applicationinsights');
-var config = require('painless-config');
 const redis = require('redis');
 const async = require('async');
 
 class RetryingRedisClient {
 
-  constructor() {
+  constructor(url, key, port = 6380) {
     this.client = redis.RedisClient;
-    var options = { auth_pass: config.get('REDIS_ACCESS_KEY') };
-    options.tls = { servername: config.get('REDIS_URL') };
-    this.client = redis.createClient(6380, config.get('REDIS_URL'), options);
+    var options = { auth_pass: key, tls: { servername: url }};
+    this.client = redis.createClient(port, url, options);
     this.client.on('error', error => appInsights.client.trackException(error, { name: 'SvcRedisError' }));
     this.client.on('reconnecting', properties => appInsights.client.trackEvent('SvcRedisReconnecting', properties));
     setInterval(this.heartbeat.bind(this), 60 * 1000);
@@ -65,4 +63,4 @@ class RetryingRedisClient {
   }
 }
 
-module.exports = new RetryingRedisClient();
+module.exports = RetryingRedisClient;

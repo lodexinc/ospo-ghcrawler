@@ -1,7 +1,7 @@
 const expressSession = require('express-session');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const redis = require('./retryingRedis');
+const RetryingRedis = require('./retryingRedis');
 const azureAdOAuth2Strategy = require('passport-azure-ad-oauth2');
 const redisStore = require('connect-redis')(expressSession);
 const express = require('express');
@@ -18,7 +18,8 @@ function initialize(app, givenConfig) {
   // TODO temporarily skip using auth and rely on a token header or local host
   if (process.env.NODE_ENV) return;
 
-  app.use(expressSession({ store: new redisStore({ client: redis.client, prefix: `${process.env.NODE_ENV}:session:` }), secret: config.sessionSecret, resave: false, saveUninitialized: false }));
+  const redis = new RetryingRedis(config.redisUrl, config.redisAccessKey, config.redisPort);
+  // app.use(expressSession({ store: new redisStore({ client: redis.client, prefix: `${process.env.NODE_ENV}:session:` }), secret: config.sessionSecret, resave: false, saveUninitialized: false }));
   app.use(passport.initialize());
   app.use(passport.session());
 
