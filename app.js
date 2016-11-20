@@ -34,7 +34,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(logger('dev'));
 
-auth.initialize(app, authConfig);
+// auth.initialize(app, authConfig);
 
 app.use('/config', require('./routes/config')(service));
 app.use('/requests', require('./routes/requests')(service));

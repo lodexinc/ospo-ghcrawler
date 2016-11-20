@@ -6,7 +6,8 @@ const wrap = require('../middleware/promiseWrap');
 let crawlerService = null;
 const router = express.Router();
 
-router.post('/', auth.validate, wrap(function* (request, response, next) {
+router.post('/', wrap(function* (request, response, next) {
+// router.post('/', auth.validate, wrap(function* (request, response, next) {
   const body = request.body;
   yield crawlerService.crawler.queue(body);
   response.send(201);
