@@ -10,11 +10,7 @@ const router = express.Router();
 router.patch('/', wrap(function* (request, response, next) {
   const options = request.body.reduce((result, change) => {
     if (change.op === 'replace') {
-      if (change.path === 'orgs') {
-        crawlerService.crawler.config.orgFilter = change.value;
-      } else {
-        result[change.path.slice(1)] = change.value;
-      }
+      result[change.path.slice(1)] = change.value;
     }
     return result;
   }, {});
@@ -29,7 +25,7 @@ router.get('/', function (request, response, next) {
   const result = Object.assign({}, crawlerService.options);
   result.actualCount = crawlerService.status();
   const filter = crawlerService.crawler.config.orgFilter;
-  result.orgs = filter || [];
+  result.orgs = Array.from(filter || []);
   response.status(200).send(result);
 });
 
