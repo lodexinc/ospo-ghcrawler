@@ -36,6 +36,7 @@ function initialize(app, givenConfig) {
     done(null, user);
   }
 
+  // TODO add back VSO .use
   passport.use('aad', new azureAdOAuth2Strategy(config.aadConfig, authCallback));
 
   passport.serializeUser(function (user, done) {
