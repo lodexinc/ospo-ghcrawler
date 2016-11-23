@@ -3,14 +3,15 @@
 //
 
 const app = require('../app');
-const init = require('express-init');
+const config = require('painless-config');
 const http = require('http');
+const init = require('express-init');
 
 /**
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(config.get('GHCRAWLER_SERVICE_PORT') || process.env.PORT || '3000');
 app.set('port', port);
 
 const server = http.createServer(app);

@@ -1,0 +1,11 @@
+{
+  "traversal": {
+    "loopCount": 5,
+    "orgs": ["contoso-d", "microsoft"],
+    "throttledDelay": 120000,
+    "priorityPercent": 40
+  },
+  "redisFlagger": {
+    "ttl": 10000
+  }
+}
