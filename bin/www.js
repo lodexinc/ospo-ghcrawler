@@ -16,7 +16,7 @@ app.set('port', port);
 const server = http.createServer(app);
 
 // initialize the apps (if they have async init functions) and start listening
-init(app, function (error) {
+init(app, error => {
   if (error) {
     console.log('Error initializing the Express app: ' + error);
     throw new Error(error);

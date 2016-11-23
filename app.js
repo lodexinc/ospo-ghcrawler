@@ -11,7 +11,7 @@ const sendHelper = require('./middleware/sendHelper');
 
 mockInsights.setup(config.get('GHCRAWLER_INSIGHTS_KEY'), true);
 
-const crawler = OspoCrawler.createTypicalSetup(config.get('GHCRAWLER_QUEUE_PROVIDER'));
+const crawler = OspoCrawler.createTypicalSetup(config.get('GHCRAWLER_QUEUE_PROVIDER'), config.get('GHCRAWLER_STORE_PROVIDER'));
 const service = new CrawlerService(crawler);
 
 const authConfig = {
@@ -43,7 +43,7 @@ app.use('/requests', require('./routes/requests')(service));
 
 // to keep AlwaysOn flooding logs with errors
 app.get('/', function (request, response, next) {
-  response['helpers'].send.noContent();
+  response.helpers.send.noContent();
 });
 
 // Catch 404 and forward to error handler
@@ -54,6 +54,15 @@ const requestHandler = function (request, response, next) {
   next(error);
 };
 app.use(requestHandler);
+
+// Hang the service init code off a route middleware.  Doesn't really matter which one.
+requestHandler.init = (app, callback) => {
+  service.ensureInitialized().then(() => {
+    console.log('Service initialized');
+    // call the callback but with no args.  An arg indicates an error.
+    callback();
+  });
+};
 
 // Error handlers
 const handler = function (error, request, response, next) {
