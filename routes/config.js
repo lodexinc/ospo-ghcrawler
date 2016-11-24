@@ -26,6 +26,11 @@ router.get('/', function (request, response, next) {
   result.actualCount = crawlerService.status();
   const filter = crawlerService.crawler.config.orgFilter;
   result.orgs = Array.from(filter || []);
+  const loop = crawlerService.loops[0];
+  if (loop) {
+    result.delay = loop.options.delay || 0;
+  }
+
   response.status(200).send(result);
 });
 
