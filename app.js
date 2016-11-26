@@ -11,8 +11,7 @@ const sendHelper = require('./middleware/sendHelper');
 
 mockInsights.setup(config.get('GHCRAWLER_INSIGHTS_KEY'), true);
 
-const crawler = OspoCrawler.createTypicalSetup(config.get('GHCRAWLER_QUEUE_PROVIDER'), config.get('GHCRAWLER_STORE_PROVIDER'));
-const service = new CrawlerService(crawler);
+const service = OspoCrawler.createCrawlerService();
 
 const authConfig = {
   redisUrl: config.get('GHCRAWLER_REDIS_URL'),
@@ -48,7 +47,7 @@ app.get('/', function (request, response, next) {
 
 // Catch 404 and forward to error handler
 const requestHandler = function (request, response, next) {
-  let error = { message: 'Not Found'};
+  let error = { message: 'Not Found' };
   error.status = 404;
   error.success = false;
   next(error);
@@ -57,11 +56,16 @@ app.use(requestHandler);
 
 // Hang the service init code off a route middleware.  Doesn't really matter which one.
 requestHandler.init = (app, callback) => {
-  service.ensureInitialized().then(() => {
-    console.log('Service initialized');
-    // call the callback but with no args.  An arg indicates an error.
-    callback();
-  });
+  service.ensureInitialized().then(
+    () => {
+      console.log('Service initialized');
+      // call the callback but with no args.  An arg indicates an error.
+      callback();
+    },
+    error => {
+      console.log(`Service initialization error: ${error.message}`);
+      callback(error);
+    });
 };
 
 // Error handlers
