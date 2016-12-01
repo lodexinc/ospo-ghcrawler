@@ -22,6 +22,28 @@
       "outFiles": []
     },
     {
+      "name": "Reprocessor",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/www.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost",
+        "GHCRAWLER_STORAGE_NAME": "ghcrawlerdev",
+        "GHCRAWLER_REPROCESS": "true"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
       "name": "Crawl",
       "type": "node",
       "request": "launch",
