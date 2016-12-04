@@ -9,19 +9,19 @@ const RequestTracker = require('../lib/redisRequestTracker.js');
 const sinon = require('sinon');
 
 describe('NON Locking Request Tracker track', () => {
-    it('should set the tag and call the operation', () => {
-      const redis = createRedisClient({ get: sinon.spy((key, cb) => { cb(null, null); }), set: sinon.spy((values, cb) => { cb(null); }) });
-      const locker = createNolock();
-      const tracker = createTracker('test', redis, locker);
-      const request = new Request('org', 'http://test.com');
-      const operation = sinon.spy(() => { return Q(24); });
+  it('should set the tag and call the operation', () => {
+    const redis = createRedisClient({ get: sinon.spy((key, cb) => { cb(null, null); }), set: sinon.spy((values, cb) => { cb(null); }) });
+    const locker = createNolock();
+    const tracker = createTracker('test', redis, locker);
+    const request = new Request('org', 'http://test.com');
+    const operation = sinon.spy(() => { return Q(24); });
 
-      return tracker.track(request, operation).then(() => {
-        expect(operation.callCount).to.be.equal(1);
-        expect(redis.get.callCount).to.be.equal(1);
-        expect(redis.set.callCount).to.be.equal(1);
-        expect(parseInt(redis.set.getCall(0).args[0][1])).to.be.approximately(Date.now(), 10);
-      });
+    return tracker.track(request, operation).then(() => {
+      expect(operation.callCount).to.be.equal(1);
+      expect(redis.get.callCount).to.be.equal(1);
+      expect(redis.set.callCount).to.be.equal(1);
+      expect(parseInt(redis.set.getCall(0).args[0][1])).to.be.approximately(Date.now(), 10);
+    });
   });
 
   it('should reject and not call the operation if could not read tag', () => {
