@@ -19,7 +19,7 @@
     "express-init": "^1.1.0",
     "express-session": "^1.14.2",
     "fast-json-patch": "^1.1.2",
-    "ghcrawler": "0.1.9",
+    "ghcrawler": "0.1.10",
     "ghrequestor": "^0.1.6",
     "htmlencode": "0.0.4",
     "jsonwebtoken": "^7.1.9",
