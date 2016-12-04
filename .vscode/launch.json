@@ -2,6 +2,46 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Mocha",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+      "stopOnEntry": false,
+      "args": [
+        "${workspaceRoot}/test/*.js"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost"
+      },
+      "console": "internalConsole"
+    },
+    {
+      "name": "Coverage",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/istanbul/lib/cli.js",
+      "stopOnEntry": false,
+      "args": [
+        "cover",
+        "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+        "${workspaceRoot}/test/*.js"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost"
+      },
+      "console": "internalConsole"
+    },
+    {
       "name": "Web service",
       "type": "node",
       "request": "launch",
@@ -89,7 +129,10 @@
       "request": "launch",
       "program": "${workspaceRoot}/busie.js",
       "stopOnEntry": false,
-      "args": ["ghcrawlerdev", "amqp"],
+      "args": [
+        "ghcrawlerdev",
+        "amqp"
+      ],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
