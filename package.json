@@ -4,12 +4,14 @@
   "description": "",
   "scripts": {
     "start": "node ./bin/www.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/mocha/bin/mocha test/unit/**/*.js",
+    "integration": "./node_modules/mocha/bin/mocha test/integration/**/*.js --timeout 20000"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "amqp10": "^3.4.0",
     "amqplib": "^0.5.1",
     "azure": "1.2.0-preview",
     "azure-storage": "^1.3.2",

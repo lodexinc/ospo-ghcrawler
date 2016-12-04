@@ -8,7 +8,7 @@
       "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
       "stopOnEntry": false,
       "args": [
-        "${workspaceRoot}/test/*.js"
+        "${workspaceRoot}/test/unit/*.js"
       ],
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
@@ -29,7 +29,7 @@
       "args": [
         "cover",
         "${workspaceRoot}/node_modules/mocha/bin/_mocha",
-        "${workspaceRoot}/test/*.js"
+        "${workspaceRoot}/test/unit/*.js"
       ],
       "cwd": "${workspaceRoot}",
       "runtimeExecutable": null,
