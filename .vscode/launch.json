@@ -2,6 +2,46 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Mocha",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+      "stopOnEntry": false,
+      "args": [
+        "${workspaceRoot}/test/*.js"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost"
+      },
+      "console": "internalConsole"
+    },
+    {
+      "name": "Coverage",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/istanbul/lib/cli.js",
+      "stopOnEntry": false,
+      "args": [
+        "cover",
+        "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+        "${workspaceRoot}/test/*.js"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost"
+      },
+      "console": "internalConsole"
+    },
+    {
       "name": "Web service",
       "type": "node",
       "request": "launch",
@@ -16,6 +56,28 @@
       ],
       "env": {
         "NODE_ENV": "localhost"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
+      "name": "Reprocessor",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/www.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost",
+        "GHCRAWLER_STORAGE_NAME": "ghcrawlerdev",
+        "GHCRAWLER_REPROCESS": "true"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -67,7 +129,10 @@
       "request": "launch",
       "program": "${workspaceRoot}/busie.js",
       "stopOnEntry": false,
-      "args": ["ghcrawlerdev", "amqp"],
+      "args": [
+        "ghcrawlerdev",
+        "amqp"
+      ],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
