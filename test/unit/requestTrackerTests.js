@@ -5,7 +5,7 @@ const extend = require('extend');
 const Q = require('q');
 const redlock = require('redlock');
 const Request = require('ghcrawler').request;
-const RequestTracker = require('../lib/redisRequestTracker.js');
+const RequestTracker = require('../../lib/redisRequestTracker.js');
 const sinon = require('sinon');
 
 describe('NON Locking Request Tracker track', () => {
