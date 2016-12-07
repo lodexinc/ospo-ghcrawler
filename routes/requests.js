@@ -15,7 +15,7 @@ router.post('/', wrap(function* (request, response, next) {
   body.policy = policy || body.policy;
   const crawlRequest = Request.adopt(body);
   yield crawlerService.crawler.queue(crawlRequest);
-  response.send(201);
+  response.sendStatus(201);
 }));
 
 function setup(service) {
