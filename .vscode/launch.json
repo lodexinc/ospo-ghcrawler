@@ -77,7 +77,29 @@
       "env": {
         "NODE_ENV": "localhost",
         "GHCRAWLER_STORAGE_NAME": "ghcrawlerdev",
-        "GHCRAWLER_REPROCESS": "true"
+        "GHCRAWLER_MODE": "Reprocessor"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
+      "name": "In Memory",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/www.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost",
+        "GHCRAWLER_STORAGE_NAME": "ghcrawlerdev",
+        "GHCRAWLER_MODE": "InMemory"
       },
       "console": "internalConsole",
       "sourceMaps": false,

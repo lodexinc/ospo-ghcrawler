@@ -10,7 +10,7 @@ const router = express.Router();
 // router.patch('/', auth.validate, wrap(function* (request, response, next) {
 router.patch('/', wrap(function* (request, response, next) {
   yield crawlerService.updateConfiguration(request.body);
-  response.send(200);
+  response.sendStatus(200);
 }));
 
 // router.get('/', auth.validate, function (request, response, next) {

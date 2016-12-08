@@ -11,7 +11,9 @@ const sendHelper = require('./middleware/sendHelper');
 
 mockInsights.setup(config.get('GHCRAWLER_INSIGHTS_KEY'), true);
 
-const service = config.get('GHCRAWLER_REPROCESS') ? OspoCrawler.createReprocessorService() : OspoCrawler.createCrawlerService();
+const mode = config.get('GHCRAWLER_MODE') || 'Crawler';
+
+const service = OspoCrawler[`create${mode}Service`]();
 
 const authConfig = {
   redisUrl: config.get('GHCRAWLER_REDIS_URL'),
