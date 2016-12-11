@@ -29,6 +29,7 @@
     "moment": "2.15.2",
     "mongodb": "2.2.11",
     "morgan": "^1.7.0",
+    "node-uuid": "^1.4.7",
     "painless-config": "^0.1.0",
     "passport": "^0.3.2",
     "passport-azure-ad-oauth2": "0.0.4",
