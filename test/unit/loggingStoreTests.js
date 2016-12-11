@@ -1,7 +1,7 @@
 const expect = require('chai').expect;
+const LoggingStore = require('../../lib/loggingStore');
 const Q = require('q');
 const sinon = require('sinon');
-const LoggingStore = require('../../lib/loggingStore');
 
 let baseStore;
 
@@ -64,28 +64,30 @@ describe('Logging Store', () => {
   });
 
   it('Should create blob if not exists', () => {
+    const appendResponses = [{ statusCode: 404 }, { statusCode: 404 }, null];
     let blobService = {
       createAppendBlobFromText: sinon.spy((name, blobName, text, cb) => { cb(); }),
-      appendBlockFromText: sinon.spy((name, blobName, text, cb) => { cb({ statusCode: 404 }); })
+      appendBlockFromText: sinon.spy((name, blobName, text, cb) => { cb(appendResponses.shift()); })
     };
     loggingStore = new LoggingStore(baseStore, blobService, 'test');
     return loggingStore.upsert({ test: true }).then(() => {
       expect(blobService.createAppendBlobFromText.callCount).to.be.equal(1);
-      expect(blobService.appendBlockFromText.callCount).to.be.equal(1);
+      expect(blobService.appendBlockFromText.callCount).to.be.above(1);
       expect(baseStore.upsert.callCount).to.be.equal(1);
       expect(loggingStore.blobSequenceNumber).to.be.equal(1);
     });
   });
 
   it('Should increment blob sequence number', () => {
+    const appendResponses = [{ statusCode: 409 }, { statusCode: 409 }, { statusCode: 404 }, null];
     let blobService = {
       createAppendBlobFromText: sinon.spy((name, blobName, text, cb) => { cb(); }),
-      appendBlockFromText: sinon.spy((name, blobName, text, cb) => { cb({ statusCode: 409 }); })
+      appendBlockFromText: sinon.spy((name, blobName, text, cb) => { cb(appendResponses.shift()); })
     };
     loggingStore = new LoggingStore(baseStore, blobService, 'test');
     return loggingStore.upsert({ test: true }).then(() => {
       expect(blobService.createAppendBlobFromText.callCount).to.be.equal(1);
-      expect(blobService.appendBlockFromText.callCount).to.be.equal(1);
+      expect(blobService.appendBlockFromText.callCount).to.be.above(1);
       expect(baseStore.upsert.callCount).to.be.equal(1);
       expect(loggingStore.blobSequenceNumber).to.be.equal(2);
     });

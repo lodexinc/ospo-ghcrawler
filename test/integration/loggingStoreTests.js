@@ -1,10 +1,14 @@
+const expect = require('chai').expect;
 const OspoCrawler = require('../../lib/ospoCrawler');
 const Q = require('q');
 const qlimit = require('qlimit');
+const sinon = require('sinon');
 
 let loggingStore;
 
-describe('Logging Store Integration', () => {
+describe('Logging Store Integration', function () {
+  this.timeout(5000);
+
   before(() => {
     const baseStore = {
       connect: () => logAndResolve('connect'),
@@ -26,17 +30,16 @@ describe('Logging Store Integration', () => {
   });
 
   it('Should connect and upsert twice', () => {
-    return loggingStore.connect().then(() => {
-      return loggingStore.upsert({ test: process.hrtime().join('') }).then(() => {
-        return loggingStore.upsert({ test: process.hrtime().join('') });
-      });
-    });
+    return loggingStore.connect()
+      .then(() => { return loggingStore.upsert({ test: process.hrtime().join(' ') }); })
+      .then(() => { return loggingStore.upsert({ test: process.hrtime().join(' ') }); });
   });
 
   it('Should connect and upsert many times', () => {
+    sinon.spy(loggingStore, '_azureAppend');
     const document = { abc: 1 };
     const docs = [];
-    for (let i=0; i<50; i++) {
+    for (let i = 0; i < 50; i++) {
       docs.push(document);
     }
     let counter = 0;
@@ -45,6 +48,8 @@ describe('Logging Store Integration', () => {
         console.log(++counter);
         return loggingStore.upsert(doc);
       })));
+    }).then(() => {
+      expect(loggingStore._azureAppend.callCount).to.be.equal(50);
     });
   });
 });
