@@ -42,7 +42,7 @@
       "console": "internalConsole"
     },
     {
-      "name": "Web service",
+      "name": "Standard",
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/bin/www.js",
@@ -55,7 +55,8 @@
         "--nolazy"
       ],
       "env": {
-        "NODE_ENV": "localhost"
+        "NODE_ENV": "localhost",
+        "GHCRAWLER_MODE": "Standard"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -76,8 +77,28 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
-        "GHCRAWLER_STORAGE_NAME": "ghcrawlerdev",
         "GHCRAWLER_MODE": "Reprocessor"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
+      "name": "Reprocessor2",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/www.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost",
+        "GHCRAWLER_MODE": "Reprocessor2"
       },
       "console": "internalConsole",
       "sourceMaps": false,
