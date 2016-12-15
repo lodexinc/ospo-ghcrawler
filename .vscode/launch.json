@@ -63,7 +63,7 @@
       "outFiles": []
     },
     {
-      "name": "Reprocessor",
+      "name": "OldNew",
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/bin/www.js",
@@ -77,28 +77,7 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
-        "GHCRAWLER_MODE": "Reprocessor"
-      },
-      "console": "internalConsole",
-      "sourceMaps": false,
-      "outFiles": []
-    },
-    {
-      "name": "Reprocessor2",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/bin/www.js",
-      "stopOnEntry": false,
-      "args": [],
-      "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "localhost",
-        "GHCRAWLER_MODE": "Reprocessor2"
+        "GHCRAWLER_MODE": "OldNew"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -119,69 +98,7 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
-        "GHCRAWLER_STORAGE_NAME": "ghcrawlerdev",
         "GHCRAWLER_MODE": "InMemory"
-      },
-      "console": "internalConsole",
-      "sourceMaps": false,
-      "outFiles": []
-    },
-    {
-      "name": "In Memory AMQP 1.0",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/bin/www.js",
-      "stopOnEntry": false,
-      "args": [],
-      "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "localhost",
-        "GHCRAWLER_MODE": "Amqp10InMemory"
-      },
-      "console": "internalConsole",
-      "sourceMaps": false,
-      "outFiles": []
-    },
-    {
-      "name": "Crawl",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/runLocal.js",
-      "stopOnEntry": false,
-      "args": [],
-      "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "localhost"
-      },
-      "console": "internalConsole",
-      "sourceMaps": false,
-      "outFiles": []
-    },
-    {
-      "name": "Crawl Job",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/app_data/jobs/continuous/crawler/run.js",
-      "stopOnEntry": false,
-      "args": [],
-      "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "localhost"
       },
       "console": "internalConsole",
       "sourceMaps": false,
