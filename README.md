@@ -14,7 +14,7 @@ Open Source Programs Office GitHub Crawler
 #### Start Application
 `node ./bin/www.js`
 #### Start or Reconfigure Crawling
-`curl -i -H "X-token: test1" -H "Content-Type: application/json" -X PATCH -d '[{ "op": "replace", "path": "/crawler/count", "value": 1}, { "op": "replace", "path": "/crawler/orgList", "value": ["contoso-d"] }]' http://localhost:3000/config`
+`curl -i -H "X-token: test1" -H "Content-Type: application/json" -X PATCH -d '[{ "op": "replace", "path": "/crawler/count", "value": 1 }, { "op": "replace", "path": "/crawler/orgList", "value": ["contoso-d"] }, { "op": "replace", "path": "/queuing/credit", "value": 10 }]' http://localhost:3000/config`
 
 #### Add to Queue
 `curl -i -H "X-token: test1" -H "Content-Type: application/json" -X POST -d '{"type": "org", "url": "https://api.github.com/orgs/contoso-d", "policy": "reprocessAndDiscover"}' http://localhost:3000/requests`
