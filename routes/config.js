@@ -20,7 +20,8 @@ router.get('/', function (request, response, next) {
   const result = Object.assign({}, crawlerService.options);
   Object.getOwnPropertyNames(result).forEach(key => {
     result[key] = Object.assign({}, result[key]);
-    delete result[key].reconfigure;
+    delete result[key].on;
+    delete result[key].notify;
     delete result[key].logger;
   });
 
