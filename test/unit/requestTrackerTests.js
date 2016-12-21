@@ -453,9 +453,21 @@ function createTracker(prefix, redisClient = createRedisClient(), locker = creat
 
 function createOptions() {
   return {
+    logger: createBaseLog(),
     tracker: {
       lockTtl: 1000,
       ttl: 6 * 60 * 1000
     }
   };
+}
+
+function createBaseLog({info = null, warn = null, error = null, verbose = null, silly = null} = {}) {
+  const result = {};
+  result.info = info || (() => { });
+  result.warn = warn || (() => { });
+  result.error = error || (() => { });
+  result.verbose = verbose || ((message) => { console.log(message) });
+  result.silly = silly || ((message) => { console.log(message) });
+  result.level = 'silly';
+  return result;
 }
