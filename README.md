@@ -32,7 +32,7 @@ Open Source Programs Office GitHub Crawler
   "GHCRAWLER_REDIS_PORT": 6380,
   "GHCRAWLER_QUEUE_PROVIDER": "amqp10",
   "GHCRAWLER_AMQP10_URL": "amqps://RootManageSharedAccessKey:[SECRET]@ghcrawlerdev.servicebus.windows.net",
-  "GHCRAWLER_SERVICEBUS_TOPIC": "ghcrawlerdev",
+  "GHCRAWLER_QUEUE_NAME": "ghcrawlerdev",
   "GHCRAWLER_STORE_PROVIDER": "azure",
   "GHCRAWLER_STORAGE_NAME": "ghcrawlerdev",
   "GHCRAWLER_STORAGE_ACCOUNT": "ghcrawlerdev",
