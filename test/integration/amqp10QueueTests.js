@@ -14,7 +14,7 @@ const formatter = message => {
 };
 const options = {
   logger: OspoCrawler.createLogger(true, true),
-  topic: 'ghcrawler',
+  queueName: 'ghcrawler',
   credit: 2
 };
 new ObjectObserver(options);
