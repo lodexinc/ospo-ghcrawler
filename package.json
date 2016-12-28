@@ -38,6 +38,7 @@
     "q": "1.4.1",
     "qlimit": "^0.1.1",
     "redis": "2.6.3",
+    "redis-metrics": "^0.4.1",
     "redlock": "2.0.1",
     "winston": "2.2.0",
     "winston-azure-application-insights": "^1.1.0"
