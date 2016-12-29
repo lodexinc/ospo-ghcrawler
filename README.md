@@ -1,5 +1,7 @@
 # OSPO GHCrawler
-Open Source Programs Office GitHub Crawler
+Implementations and configuration of an API crawler that works over GitHub API.  It can be configured
+to use a variety of different queuing (e.g., AMQP 1.0 and AMQP 0.9 compatible queues like Azure ServiceBus and Rabbit MQ, respectively)
+and storage technologies (e.g., Azure Blob and MongoDB).
 
 ## Build
 `npm install`
@@ -24,6 +26,7 @@ Open Source Programs Office GitHub Crawler
 {
   "NODE_ENV": "localhost",
   "GHCRAWLER_MODE": "Standard",
+  "GHCRAWLER_OPTIONS_PROVIDER": ["defaults" | "inmemory" | "redis"],
   "GHCRAWLER_INSIGHTS_KEY": "[SECRET]",
   "GHCRAWLER_ORGS_FILE": "../orgs",
   "GHCRAWLER_GITHUB_TOKENS": "[SECRET]",
@@ -32,7 +35,7 @@ Open Source Programs Office GitHub Crawler
   "GHCRAWLER_REDIS_PORT": 6380,
   "GHCRAWLER_QUEUE_PROVIDER": "amqp10",
   "GHCRAWLER_AMQP10_URL": "amqps://RootManageSharedAccessKey:[SECRET]@ghcrawlerdev.servicebus.windows.net",
-  "GHCRAWLER_QUEUE_NAME": "ghcrawlerdev",
+  "GHCRAWLER_QUEUE_PREFIX": "ghcrawlerdev",
   "GHCRAWLER_STORE_PROVIDER": "azure",
   "GHCRAWLER_STORAGE_NAME": "ghcrawlerdev",
   "GHCRAWLER_STORAGE_ACCOUNT": "ghcrawlerdev",
