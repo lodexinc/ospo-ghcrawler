@@ -1,7 +1,9 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const Amqp10Queue = require('../../lib/amqp10Queue');
 const config = require('painless-config');
 const expect = require('chai').expect;
-const ObjectObserver = require('../../lib/objectObserver');
 const OspoCrawler = require('../../lib/ospoCrawler');
 const Q = require('q');
 const Request = require('ghcrawler').request;
@@ -17,7 +19,6 @@ const options = {
   queueName: 'ghcrawler',
   credit: 2
 };
-new ObjectObserver(options);
 
 describe('AMQP 1.0 Integration', () => {
 

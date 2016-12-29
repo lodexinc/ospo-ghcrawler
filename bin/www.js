@@ -1,6 +1,5 @@
-//
-// Copyright (c) Microsoft. All rights reserved.
-//
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
 
 const app = require('../app');
 const config = require('painless-config');

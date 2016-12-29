@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const expressSession = require('express-session');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');

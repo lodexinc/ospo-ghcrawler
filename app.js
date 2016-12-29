@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const appInsights = require('applicationinsights');
 const auth = require('./middleware/auth');
 const config = require('painless-config');
