@@ -39,6 +39,7 @@ app.use(sendHelper());
 
 // auth.initialize(app, authConfig);
 
+app.use('/status', require('./routes/status')(service));
 app.use('/config', require('./routes/config')(service));
 app.use('/requests', require('./routes/requests')(service));
 

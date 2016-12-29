@@ -57,7 +57,7 @@
       "env": {
         "NODE_ENV": "localhost",
         "GHCRAWLER_MODE": "Standard",
-        "GHCRAWLER_OPTIONS_PROVIDER": "InMemory"
+        "GHCRAWLER_OPTIONS_PROVIDER": "defaults"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -78,7 +78,8 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
-        "GHCRAWLER_MODE": "OldNew"
+        "GHCRAWLER_MODE": "OldNew",
+        "GHCRAWLER_OPTIONS_PROVIDER": "defaults"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -99,7 +100,8 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
-        "GHCRAWLER_MODE": "InMemory"
+        "GHCRAWLER_MODE": "InMemory",
+        "GHCRAWLER_OPTIONS_PROVIDER": "defaults"
       },
       "console": "internalConsole",
       "sourceMaps": false,
