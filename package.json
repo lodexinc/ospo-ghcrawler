@@ -39,6 +39,8 @@
     "qlimit": "^0.1.1",
     "redis": "2.6.3",
     "redlock": "2.0.1",
+    "refreshing-config": "^0.1.0",
+    "refreshing-config-redis": "^0.1.0",
     "winston": "2.2.0",
     "winston-azure-application-insights": "^1.1.0"
   },

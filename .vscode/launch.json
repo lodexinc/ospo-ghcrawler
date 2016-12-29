@@ -56,7 +56,8 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
-        "GHCRAWLER_MODE": "Standard"
+        "GHCRAWLER_MODE": "Standard",
+        "GHCRAWLER_OPTIONS_PROVIDER": "InMemory"
       },
       "console": "internalConsole",
       "sourceMaps": false,
