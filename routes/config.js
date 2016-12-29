@@ -15,19 +15,15 @@ router.patch('/', wrap(function* (request, response, next) {
 }));
 
 // router.get('/', auth.validate, function (request, response, next) {
-router.get('/', wrap(function* (request, response, next) {
-  const config = yield configService.getAll().then(result => {
-    result = Object.assign({}, result);
-    Object.getOwnPropertyNames(result).forEach(key => {
-      result[key] = Object.assign({}, result[key]);
-      delete result[key]._emitter;
-      delete result[key].logger;
-    });
-    return result;
+router.get('/', (request, response, next) => {
+  result = Object.assign({}, crawlerService.options);
+  Object.getOwnPropertyNames(result).forEach(subsystemName => {
+    result[subsystemName] = Object.assign({}, result[subsystemName]);
+    delete result[subsystemName]._emitter;
+    delete result[subsystemName].logger;
   });
-
-  response.json(config).status(200).end();
-}));
+  response.json(result).status(200).end();
+});
 
 function setup(service) {
   crawlerService = service;

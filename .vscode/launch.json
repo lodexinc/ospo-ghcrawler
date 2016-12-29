@@ -57,7 +57,7 @@
       "env": {
         "NODE_ENV": "localhost",
         "GHCRAWLER_MODE": "Standard",
-        "GHCRAWLER_OPTIONS_PROVIDER": "defaults"
+        "GHCRAWLER_OPTIONS_PROVIDER": "redis"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -101,7 +101,8 @@
       "env": {
         "NODE_ENV": "localhost",
         "GHCRAWLER_MODE": "InMemory",
-        "GHCRAWLER_OPTIONS_PROVIDER": "defaults"
+        "GHCRAWLER_OPTIONS_PROVIDER": "defaults",
+        "GHCRAWLER_INSIGHTS_KEY": "mock"
       },
       "console": "internalConsole",
       "sourceMaps": false,
