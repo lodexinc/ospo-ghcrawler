@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const appInsights = require('applicationinsights');
 const redis = require('redis');
 const async = require('async');

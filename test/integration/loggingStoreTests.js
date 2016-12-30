@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
 const expect = require('chai').expect;
 const OspoCrawler = require('../../lib/ospoCrawler');
 const Q = require('q');
