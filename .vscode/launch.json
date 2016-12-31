@@ -56,7 +56,7 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
-        "GHCRAWLER_MODE": "Standard",
+        "GHCRAWLER_MODE": "StandardWithoutEvents",
         "GHCRAWLER_OPTIONS_PROVIDER": "redis",
         "PORT": "4000"
       },
