@@ -1,21 +1,26 @@
 # OSPO GHCrawler
-Implementations and configuration of an API crawler that works over GitHub API.  It can be configured
+Implementations and configuration of an API crawler that works over GitHub API.  The crawler can be configured
 to use a variety of different queuing (e.g., AMQP 1.0 and AMQP 0.9 compatible queues like Azure ServiceBus and Rabbit MQ, respectively)
-and storage technologies (e.g., Azure Blob and MongoDB).
+and storage technologies (e.g., Azure Blob and MongoDB). Each team will want to configure their system to suit their
+infrastructure.
 
-## Build
+## Working with the code
+
+#### Build
 `npm install`
 
-## Test
-#### Unit
+#### Unit test
 `npm test`
-#### Integration
+
+#### Integration test
 `npm run integration`
 
-## Run
-#### Start Application
+#### Run
 `node ./bin/www.js`
-#### Start or Reconfigure Crawling
+
+## Configuring and controlling the crawler
+
+#### Reconfigure crawling
 `curl -i -H "X-token: test1" -H "Content-Type: application/json" -X PATCH -d '[{ "op": "replace", "path": "/crawler/count", "value": 1 }, { "op": "replace", "path": "/crawler/orgList", "value": ["contoso-d"] }, { "op": "replace", "path": "/queuing/credit", "value": 10 }]' http://localhost:3000/config`
 
 #### Add to Queue
