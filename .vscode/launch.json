@@ -56,6 +56,29 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
+        "GHCRAWLER_MODE": "Standard",
+        "GHCRAWLER_OPTIONS_PROVIDER": "redis",
+        "PORT": "4000"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
+      "name": "StandardWithoutEvents",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/www.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost",
         "GHCRAWLER_MODE": "StandardWithoutEvents",
         "GHCRAWLER_OPTIONS_PROVIDER": "redis",
         "PORT": "4000"
