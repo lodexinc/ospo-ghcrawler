@@ -57,8 +57,7 @@
       "env": {
         "NODE_ENV": "localhost",
         "GHCRAWLER_MODE": "Standard",
-        "GHCRAWLER_OPTIONS_PROVIDER": "redis",
-        "PORT": "4000"
+        "GHCRAWLER_OPTIONS_PROVIDER": "redis"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -80,8 +79,7 @@
       "env": {
         "NODE_ENV": "localhost",
         "GHCRAWLER_MODE": "StandardWithoutEvents",
-        "GHCRAWLER_OPTIONS_PROVIDER": "redis",
-        "PORT": "4000"
+        "GHCRAWLER_OPTIONS_PROVIDER": "redis"
       },
       "console": "internalConsole",
       "sourceMaps": false,
