@@ -17,7 +17,8 @@ const formatter = message => {
 const options = {
   logger: OspoCrawler.createLogger(true, true),
   queueName: 'ghcrawler',
-  credit: 2
+  credit: 2,
+  _config: { on: () => {} }
 };
 
 describe('AMQP 1.0 Integration', () => {
