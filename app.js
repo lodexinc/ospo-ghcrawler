@@ -12,16 +12,16 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const sendHelper = require('./middleware/sendHelper');
 
-mockInsights.setup(config.get('GHCRAWLER_INSIGHTS_KEY'), true);
+mockInsights.setup(config.get('CRAWLER_INSIGHTS_KEY'), true);
 
-const mode = config.get('GHCRAWLER_MODE') || 'Standard';
+const mode = config.get('CRAWLER_MODE') || 'Standard';
 
 const service = OspoCrawler.createService(mode);
 
 const authConfig = {
-  redisUrl: config.get('GHCRAWLER_REDIS_URL'),
-  redisPort: config.get('GHCRAWLER_REDIS_PORT'),
-  redisAccessKey: config.get('GHCRAWLER_REDIS_ACCESS_KEY'),
+  redisUrl: config.get('CRAWLER_REDIS_URL'),
+  redisPort: config.get('CRAWLER_REDIS_PORT'),
+  redisAccessKey: config.get('CRAWLER_REDIS_ACCESS_KEY'),
   forceAuth: true || config.get('FORCE_AUTH'),
   sessionSecret: config.get('WITNESS_SESSION_SECRET'),
   aadConfig: {

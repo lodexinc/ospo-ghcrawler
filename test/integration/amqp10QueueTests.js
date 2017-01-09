@@ -8,7 +8,7 @@ const OspoCrawler = require('../../lib/ospoCrawler');
 const Q = require('q');
 const Request = require('ghcrawler').request;
 
-const url = config.get('GHCRAWLER_AMQP10_URL'); // URL should be: amqps://<keyName>:<key>@<host>
+const url = config.get('CRAWLER_AMQP10_URL'); // URL should be: amqps://<keyName>:<key>@<host>
 const name = 'test';
 const formatter = message => {
   Request.adopt(message);
@@ -25,7 +25,7 @@ describe('AMQP 1.0 Integration', () => {
 
   before(() => {
     if (!url) {
-      throw new Error('GHCRAWLER_AMQP10_URL not configured.');
+      throw new Error('CRAWLER_AMQP10_URL not configured.');
     }
     return drainTestQueue(100);
   });
