@@ -56,8 +56,8 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
-        "GHCRAWLER_MODE": "Standard",
-        "GHCRAWLER_OPTIONS_PROVIDER": "redis"
+        "CRAWLER_MODE": "Standard",
+        "CRAWLER_OPTIONS_PROVIDER": "redis"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -78,8 +78,8 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
-        "GHCRAWLER_MODE": "StandardWithoutEvents",
-        "GHCRAWLER_OPTIONS_PROVIDER": "redis"
+        "CRAWLER_MODE": "StandardWithoutEvents",
+        "CRAWLER_OPTIONS_PROVIDER": "redis"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -100,8 +100,8 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
-        "GHCRAWLER_MODE": "OldNew",
-        "GHCRAWLER_OPTIONS_PROVIDER": "defaults"
+        "CRAWLER_MODE": "OldNew",
+        "CRAWLER_OPTIONS_PROVIDER": "defaults"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -122,9 +122,9 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
-        "GHCRAWLER_MODE": "InMemory",
-        "GHCRAWLER_OPTIONS_PROVIDER": "defaults",
-        "GHCRAWLER_INSIGHTS_KEY": "mock"
+        "CRAWLER_MODE": "InMemory",
+        "CRAWLER_OPTIONS_PROVIDER": "defaults",
+        "CRAWLER_INSIGHTS_KEY": "mock"
       },
       "console": "internalConsole",
       "sourceMaps": false,

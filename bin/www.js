@@ -10,7 +10,7 @@ const init = require('express-init');
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(config.get('GHCRAWLER_SERVICE_PORT') || process.env.PORT || '3000');
+const port = normalizePort(config.get('CRAWLER_SERVICE_PORT') || process.env.PORT || '3000');
 app.set('port', port);
 
 const server = http.createServer(app);
