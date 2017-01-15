@@ -86,6 +86,30 @@
       "outFiles": []
     },
     {
+      "name": "Dev StandardWithoutEvents",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/www.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost",
+        "CRAWLER_MODE": "StandardWithoutEvents",
+        "CRAWLER_OPTIONS_PROVIDER": "redis",
+        "CRAWLER_NAME": "crawlerdev",
+        "CRAWLER_QUEUE_PREFIX": "crawlerdev"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
       "name": "OldNew",
       "type": "node",
       "request": "launch",
