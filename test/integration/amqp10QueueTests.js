@@ -15,10 +15,10 @@ const formatter = message => {
   return message;
 };
 const options = {
-  logger: OspoCrawler.createLogger(true, true),
+  logger: OspoCrawler.createLogger(true, 'silly'),
   queueName: 'ghcrawler',
   credit: 2,
-  _config: { on: () => {} }
+  _config: { on: () => { } }
 };
 
 describe('AMQP 1.0 Integration', () => {
@@ -44,13 +44,11 @@ describe('AMQP 1.0 Integration', () => {
     const amqpQueue = new Amqp10Queue(url, name, formatter, options);
     amqpQueue.subscribe().then(() => {
       let msg = new Request('user', 'http://test.com/users/user1');
-      console.log('Pushing message:', msg);
       amqpQueue.push(msg).then(() => {
         setTimeout(() => {
           amqpQueue.pop().then(message => {
             expect(message).to.exist;
             expect(message instanceof Request).to.be.true;
-            console.log('Popped message:', message);
             amqpQueue.done(message).then(() => {
               amqpQueue.unsubscribe().then(done());
             });
@@ -64,13 +62,11 @@ describe('AMQP 1.0 Integration', () => {
     const amqpQueue = new Amqp10Queue(url, name, formatter, options);
     amqpQueue.subscribe().then(() => {
       let msg = new Request('user', 'http://test.com/users/user2');
-      console.log('Pushing message:', msg);
       amqpQueue.push(msg).then(() => {
         setTimeout(() => {
           amqpQueue.pop().then(message => {
             expect(message).to.exist;
             expect(message instanceof Request).to.be.true;
-            console.log('Popped message:', message);
             amqpQueue.done(message).then(() => {
               amqpQueue.pop().then(emptyMessage => {
                 expect(emptyMessage).to.be.null;
@@ -87,17 +83,14 @@ describe('AMQP 1.0 Integration', () => {
     const amqpQueue = new Amqp10Queue(url, name, formatter, options);
     amqpQueue.subscribe().then(() => {
       let msg = new Request('user', 'http://test.com/users/user3');
-      console.log('Pushing message:', msg);
       amqpQueue.push(msg).then(() => {
         setTimeout(() => {
           amqpQueue.pop().then(message => {
             expect(message).to.exist;
             expect(message instanceof Request).to.be.true;
-            console.log('Popped message:', message);
             amqpQueue.abandon(message).then(() => {
               setTimeout(() => {
                 amqpQueue.pop().then(abandonedMessage => {
-                  console.log('Popped abandoned message:', message);
                   expect(abandonedMessage).to.exist;
                   expect(abandonedMessage instanceof Request).to.be.true;
                   amqpQueue.done(abandonedMessage).then(() => {
@@ -112,6 +105,34 @@ describe('AMQP 1.0 Integration', () => {
     });
   });
 
+  it('Should subscribe, unsubscribe, subscribe, push, pop, ack.', (done) => {
+    const amqpQueue = new Amqp10Queue(url, name, formatter, options);
+    const msg = new Request('user', 'http://test.com/users/user4');
+    amqpQueue.subscribe().delay(200).then(() => {
+      amqpQueue.unsubscribe().then(() => {
+        amqpQueue.subscribe().delay(200).then(() => {
+          amqpQueue.push(msg).delay(1000).then(() => {
+            amqpQueue.pop().then(message => {
+              expect(message).to.be.not.null;
+              amqpQueue.done(message).then(() => {
+                amqpQueue.unsubscribe().then(done());
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  it('Should push without connecting, fail, try unsubscribibg', (done) => {
+    const amqpQueue = new Amqp10Queue(url, name, formatter, options);
+    const msg = new Request('user', 'http://test.com/users/user4');
+    amqpQueue.push(msg).then(message => { }, reason => {
+      expect(reason).to.be.not.null;
+      amqpQueue.unsubscribe().then(done());
+    });
+  });
+
   it('Should push pop and ack 10 messages when initial credit is 10', () => {
     const pushPromises = [];
     const popPromises = [];
@@ -120,7 +141,6 @@ describe('AMQP 1.0 Integration', () => {
     return amqpQueue.subscribe().then(() => {
       for (let i = 1; i <= 10; i++) {
         let msg = new Request('user', 'http://test.com/users/user' + i);
-        console.log(`Pushing message ${i}:`, msg);
         pushPromises.push(amqpQueue.push(msg));
       }
       return Q.all(pushPromises).then(() => {
@@ -128,7 +148,6 @@ describe('AMQP 1.0 Integration', () => {
           popPromises.push(amqpQueue.pop().then(message => {
             expect(message).to.exist;
             expect(message instanceof Request).to.be.true;
-            console.log(`Popped message ${i}. Calling done on:`, message);
             return amqpQueue.done(message);
           }));
         }
