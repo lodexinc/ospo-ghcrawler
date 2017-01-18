@@ -138,7 +138,7 @@ describe('AMQP 1.0 Integration', () => {
     const popPromises = [];
     options.credit = 10;
     const amqpQueue = new Amqp10Queue(url, name, formatter, options);
-    return amqpQueue.subscribe().delay(1000).then(() => {
+    return amqpQueue.subscribe().delay(2000).then(() => {
       for (let i = 1; i <= 10; i++) {
         let msg = new Request('user', 'http://test.com/users/user' + i);
         pushPromises.push(amqpQueue.push(msg));
