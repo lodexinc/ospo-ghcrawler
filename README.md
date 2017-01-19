@@ -31,7 +31,7 @@ infrastructure.
 {
   "NODE_ENV": "localhost",
   "CRAWLER_MODE": "Standard",
-  "CRAWLER_OPTIONS_PROVIDER": ["defaults" | "inmemory" | "redis"],
+  "CRAWLER_OPTIONS_PROVIDER": ["defaults" | "memory" | "redis"],
   "CRAWLER_INSIGHTS_KEY": "[SECRET]",
   "CRAWLER_ORGS_FILE": "../orgs",
   "CRAWLER_GITHUB_TOKENS": "[SECRET]",

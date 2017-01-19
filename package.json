@@ -38,6 +38,7 @@
     "qlimit": "^0.1.1",
     "redis": "2.6.3",
     "redis-metrics": "^0.4.1",
+    "redis-rate-limiter": "^1.0.5",
     "redlock": "2.0.1",
     "refreshing-config": "^0.1.0",
     "refreshing-config-redis": "^0.1.0",
