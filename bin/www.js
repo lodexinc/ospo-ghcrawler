@@ -9,8 +9,9 @@ const init = require('express-init');
 /**
  * Get port from environment and store in Express.
  */
+let port = normalizePort(config.get('CRAWLER_SERVICE_PORT') || process.env.PORT || '3000');
+port = port === 'random' ? null : port;
 
-const port = normalizePort(config.get('CRAWLER_SERVICE_PORT') || process.env.PORT || '3000');
 app.set('port', port);
 
 const server = http.createServer(app);
@@ -78,7 +79,6 @@ function onError(error) {
 /**
  * Event listener for HTTP server 'listening' event.
  */
-
 function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string'

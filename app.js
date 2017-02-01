@@ -70,6 +70,7 @@ requestHandler.init = (app, callback) => {
     },
     error => {
       console.log(`Service initialization error: ${error.message}`);
+      console.dir(error);
       callback(error);
     });
 };
