@@ -99,7 +99,7 @@
         "--nolazy"
       ],
       "env": {
-        "NODE_ENV": "localhost",
+        "NODE_ENV": "development",
         "CRAWLER_MODE": "StandardWithoutEvents",
         "CRAWLER_OPTIONS_PROVIDER": "redis",
         "CRAWLER_NAME": "crawlerdev",
