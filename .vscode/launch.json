@@ -2,10 +2,50 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Launch",
+      "name": "Mocha",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/index.js",
+      "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+      "stopOnEntry": false,
+      "args": [
+        "${workspaceRoot}/test/unit/*.js"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost"
+      },
+      "console": "internalConsole"
+    },
+    {
+      "name": "Coverage",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/node_modules/istanbul/lib/cli.js",
+      "stopOnEntry": false,
+      "args": [
+        "cover",
+        "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+        "${workspaceRoot}/test/unit/*.js"
+      ],
+      "cwd": "${workspaceRoot}",
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost"
+      },
+      "console": "internalConsole"
+    },
+    {
+      "name": "Standard",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/www.js",
       "stopOnEntry": false,
       "args": [],
       "cwd": "${workspaceRoot}",
@@ -15,7 +55,143 @@
         "--nolazy"
       ],
       "env": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "localhost",
+        "CRAWLER_MODE": "Standard",
+        "CRAWLER_OPTIONS_PROVIDER": "redis"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
+      "name": "StandardWithoutEvents",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/www.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost",
+        "CRAWLER_MODE": "StandardWithoutEvents",
+        "CRAWLER_OPTIONS_PROVIDER": "redis"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
+      "name": "Dev StandardWithoutEvents",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/www.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development",
+        "CRAWLER_MODE": "StandardWithoutEvents",
+        "CRAWLER_OPTIONS_PROVIDER": "redis",
+        "CRAWLER_NAME": "crawlerdev",
+        "CRAWLER_QUEUE_PREFIX": "crawlerdev"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
+      "name": "OldNew",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/www.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost",
+        "CRAWLER_MODE": "OldNew",
+        "CRAWLER_OPTIONS_PROVIDER": "defaults"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
+      "name": "In Memory",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/www.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost",
+        "CRAWLER_MODE": "InMemory",
+        "CRAWLER_OPTIONS_PROVIDER": "defaults",
+        "CRAWLER_INSIGHTS_KEY": "mock"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
+      "name": "Busie",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/busie.js",
+      "stopOnEntry": false,
+      "args": [
+        "ghcrawlerdev",
+        "amqp"
+      ],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outFiles": []
+    },
+    {
+      "name": "Webhooks",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/serviceBusWebhookRunner.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "localhost"
       },
       "console": "internalConsole",
       "sourceMaps": false,
