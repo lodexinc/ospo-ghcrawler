@@ -21,7 +21,7 @@
     "express": "^4.14.0",
     "express-init": "^1.1.0",
     "express-session": "^1.14.2",
-    "ghcrawler": "^0.2.5",
+    "ghcrawler": "^0.2.6",
     "ghrequestor": "^0.1.6",
     "htmlencode": "0.0.4",
     "ip": "^1.1.4",
