@@ -90,7 +90,6 @@ Exposed endpoints:
 
 TODO:
 
-1. Fix bug with RabbitMQ not connecting on startup
 1. Pre-configure Metabase
 1. Data persistence
 1. Create separate docker-compose for general usage vs development
