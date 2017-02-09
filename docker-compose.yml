@@ -22,19 +22,11 @@ dashboard:
   build: ../crawler-dashboard
   ports:
     - "4000:4000"
-    - "6868:5858"
   environment:
     - NODE_ENV=localhost
     - DEBUG_ALLOW_HTTP=1
     - CRAWLER_REDIS_URL=redis
     - CRAWLER_NAME=crawlerdocker
-    - CRAWLER_QUEUE_PREFIX=crawlerdocker
-    - CRAWLER_MODE=
-    - CRAWLER_STORE_PROVIDER=mongo
-    - CRAWLER_MONGO_URL=mongodb://mongo:27017/ghcrawler
-    - CRAWLER_QUEUE_PROVIDER=amqp
-    - CRAWLER_AMQP_URL=amqp://rabbitmq:5672
-    - CRAWLER_GITHUB_TOKENS=${CRAWLER_GITHUB_TOKENS}
   links:
     - redis
 crawler:
@@ -46,7 +38,6 @@ crawler:
      - dashboard
   ports:
     - "3000:3000"
-    - "5858:5858"
   environment:
     - NODE_ENV=localhost
     - CRAWLER_NAME=crawlerdocker
