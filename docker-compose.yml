@@ -12,6 +12,12 @@ rabbitmq:
   ports:
     - "5672:5672"
     - "15672:15672"
+metabase:
+  image: metabase/metabase:latest
+  ports:
+    - "5000:3000"
+  links:
+    - mongo
 dashboard:
   build: ../crawler-dashboard
   ports:
