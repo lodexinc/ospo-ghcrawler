@@ -42,7 +42,7 @@ crawler:
     - NODE_ENV=localhost
     - CRAWLER_NAME=crawlerdocker
     - CRAWLER_QUEUE_PREFIX=crawlerdocker
-    - CRAWLER_MODE=
+    - CRAWLER_MODE=StandardWithoutEvents
     - CRAWLER_REDIS_URL=redis
     - CRAWLER_STORE_PROVIDER=mongo
     - CRAWLER_MONGO_URL=mongodb://mongo:27017/ghcrawler
