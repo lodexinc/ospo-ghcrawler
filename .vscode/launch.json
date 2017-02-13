@@ -60,7 +60,7 @@
         "CRAWLER_NAME": "crawlerdocker",
         "CRAWLER_QUEUE_PREFIX": "crawlerdocker",
         "CRAWLER_OPTIONS_PROVIDER": "redis",
-        "CRAWLER_REDIS_TLS": "false",
+        "CRAWLER_REDIS_TLS": "",
         "CRAWLER_REDIS_URL": "localhost",
         "CRAWLER_REDIS_PORT": "6379",
         "CRAWLER_STORE_PROVIDER": "mongo",
