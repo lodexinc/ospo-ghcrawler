@@ -57,19 +57,8 @@ This is a temporary solution until we publish ready to use images on Docker Hub.
 1. Clone Microsoft/ospo-ghcrawler and Microsoft/crawler-dashboard
 1. Set environment variable CRAWLER_GITHUB_TOKENS to the tokens and traits you want to use
 1. In a command prompt go to the ospo-ghcrawler repository and run “docker-compose up”
-1. Workaround: Wait until all the startup messages stop and open a new command prompt in the same directory and run “docker-compose restart crawler”
-  1. This will restart the crawler container allowing it to connect to RabbitMQ successfully
 1. Go to Crawler Dashboard (http://localhost:4000) and change the crawler count to 1
-1. Go to RabbitMQ Management (http://localhost:15672) and publish the following to the crawlerdocker-normal queue:
-
-  ```
-  {
-    "type": "org",
-    "url": "https://api.github.com/orgs/contoso-d",
-    "policy": "default"
-  }
-  ```
-
+1. Queue a GitHub organization to be crawled with ```docker exec docker_crawler_1 bake contoso-d``` or a specific repository with ```docker exec docker_crawler_1 bake contoso-d/angle```.
 1. Go to Metabase (http://localhost:5000)
 
 Exposed endpoints:
