@@ -70,14 +70,7 @@ This is a temporary solution until we publish ready to use images on Docker Hub.
   }
   ```
 
-1. Go to Metabase (http://localhost:5000) and connect to the Mongo dataset:
-
-    ```
-    Name: Anything
-    Host: mongo
-    Port: 27017
-    Database name: ghcrawler
-    ```
+1. Go to Metabase (http://localhost:5000)
 
 Exposed endpoints:
 
@@ -87,6 +80,15 @@ Exposed endpoints:
 * Redis (6379)
 * RabbitMQ (5672 and 15672)
 * Metabase (5000)
+
+Updating the default Metabase configuration:
+
+1. Ensure you're starting from a completely clean container (docker-compose down && docker-compose up)
+1. Crawl a small org to populate Mongo so you have schema/sample data to work with
+1. Open metabase and configure the questions, dashboard, etc.
+  1. REMEMBER: Any changes you make will be persisted
+1. Copy the Metabase database to the docker/metabase folder in the repository:
+  ```docker cp docker_metabase_1:/var/opt/metabase/dockercrawler.db.mv.db .```
 
 TODO:
 
