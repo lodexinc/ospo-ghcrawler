@@ -19,7 +19,7 @@ metabase:
   links:
     - mongo
 dashboard:
-  build: ../crawler-dashboard
+  build: ../../crawler-dashboard
   ports:
     - "4000:4000"
   environment:
@@ -30,7 +30,8 @@ dashboard:
   links:
     - redis
 crawler:
-  build: .
+  build: ..
+  command: node --debug=5858 ./bin/www.js
   links:
      - mongo
      - redis
@@ -38,6 +39,9 @@ crawler:
      - dashboard
   ports:
     - "3000:3000"
+    - "5858:5858"
+  volumes:
+    - ../..:/opt
   environment:
     - NODE_ENV=localhost
     - CRAWLER_NAME=crawlerdocker
