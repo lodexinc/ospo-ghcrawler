@@ -14,7 +14,7 @@ const sendHelper = require('./middleware/sendHelper');
 
 mockInsights.setup(config.get('CRAWLER_INSIGHTS_KEY'), true);
 
-const mode = config.get('CRAWLER_MODE') || 'Standard';
+const mode = config.get('CRAWLER_MODE') || '';
 
 const service = OspoCrawler.createService(mode);
 

@@ -1,0 +1,37 @@
+#!/usr/bin/env node
+
+// NOTE: This script is currently only for use in the CIABatta environment
+
+const request = require('request');
+const argv = require('yargs').argv;
+
+const crawlTarget = argv._[0];
+let crawlType = null;
+let crawlUrl = 'https://api.github.com/';
+if (crawlTarget.indexOf('/') > -1) {
+  crawlType = 'repo';
+  crawlUrl += 'repos/' + crawlTarget;
+} else {
+  crawlType = 'org';
+  crawlUrl += 'orgs/' + crawlTarget;
+}
+
+const body = {
+  "type": crawlType,
+  "url": crawlUrl,
+  "policy": "default"
+}
+
+request.post('http://localhost:3000/requests', {
+  headers: {
+    'X-token': 'test1'
+  },
+  json: true,
+  body: body
+}, (error, response, body) => {
+  if (error) {
+    console.error(`Failed to queue ${crawlTarget}: ${error.message}.`);
+  } else {
+    console.log(`Queued ${crawlTarget}.`);
+  }
+});
