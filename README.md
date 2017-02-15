@@ -1,8 +1,38 @@
 # OSPO GHCrawler
-Implementations and configuration of an API crawler that works over GitHub API.  The crawler can be configured
-to use a variety of different queuing (e.g., AMQP 1.0 and AMQP 0.9 compatible queues like Azure ServiceBus and Rabbit MQ, respectively)
-and storage technologies (e.g., Azure Blob and MongoDB). Each team will want to configure their system to suit their
-infrastructure.
+[GHCrawler](https://github.com/Microsoft/ghcrawler) is a service that systematically walks GitHub APIs and harvests data about a specified set of repos and orgs.  The function here is the *getting started* infrastructure for running that system. The crawler can be configured to use a variety of different queuing (e.g., AMQP 1.0 and AMQP 0.9 compatible queues like Azure ServiceBus and Rabbit MQ, respectively) and storage technologies (e.g., Azure Blob and MongoDB). You can create your own infrastructure plugins to use different technologies.  
+
+# Running in-memory
+The easiest way try our the crawler is to run it in memory. You can get up and running in a couple minutes.  This approach does not scale and is not persistent but it's dead simple.
+
+# Running Crawler In A Box (CIABatta)
+For small to medium production systems you can run in Docker with Mongo and Rabbit using the Crawler-in-a-box (CIABatta) approach. This comes with a handy shell script for queuing up orgs and repos for harvesting as well as a dashboard for observing and controlling the crawler service.
+
+This is an evolving solution and the steps for running will be simplified published, ready-to-use images on Docker Hub. For now, follow these steps
+
+1. Clone the [Microsoft/ospo-ghcrawler](https://github.com/Microsoft/ospo-ghcrawler.git) and [Microsoft/crawler-dashboard](https://github.com/Microsoft/crawler-dashboard.git) repos.
+1. Set environment variable CRAWLER_GITHUB_TOKENS to the tokens and traits you want to use. For example, ```export CRAWLER_GITHUB_TOKENS="<token1>#public;<token2>#admin"```.
+1. In a command prompt go to ospo-ghcrawler/docker and run “docker-compose up”.
+1. Once the containers are up and running, start the servie crawling by going to Crawler Dashboard (```http://localhost:4000```). On the righthand side, change the ```crawler/count``` to 1 and click ```Update``` button.  You should see some crawler related messages in the container output.
+1. Queue a GitHub organization to be crawled with ```docker exec docker_crawler_1 bake contoso-d``` or a specific repository with ```docker exec docker_crawler_1 bake contoso-d/angle```.
+1. Go to Metabase (http://localhost:5000)
+
+Exposed endpoints:
+
+* Crawler Dashboard (4000)
+* Crawler (3000)
+* MongoDB (27017 and 28017)
+* Redis (6379)
+* RabbitMQ (5672 and 15672)
+* Metabase (5000)
+
+Updating the default Metabase configuration:
+
+1. Ensure you're starting from a completely clean container (docker-compose down && docker-compose up)
+1. Crawl a small org to populate Mongo so you have schema/sample data to work with
+1. Open metabase and configure the questions, dashboard, etc.
+  1. REMEMBER: Any changes you make will be persisted
+1. Copy the Metabase database to the docker/metabase folder in the repository:
+  ```docker cp docker_metabase_1:/var/opt/metabase/dockercrawler.db.mv.db .```
 
 ## Working with the code
 
@@ -50,34 +80,7 @@ infrastructure.
 }
 ```
 
-## Running Crawler In A Box (CIAB-atta)
 
-This is a temporary solution until we publish ready to use images on Docker Hub.
-
-1. Clone Microsoft/ospo-ghcrawler and Microsoft/crawler-dashboard
-1. Set environment variable CRAWLER_GITHUB_TOKENS to the tokens and traits you want to use
-1. In a command prompt go to the ospo-ghcrawler repository and run “docker-compose up”
-1. Go to Crawler Dashboard (http://localhost:4000) and change the crawler count to 1
-1. Queue a GitHub organization to be crawled with ```docker exec docker_crawler_1 bake contoso-d``` or a specific repository with ```docker exec docker_crawler_1 bake contoso-d/angle```.
-1. Go to Metabase (http://localhost:5000)
-
-Exposed endpoints:
-
-* Crawler Dashboard (4000)
-* Crawler (3000)
-* MongoDB (27017 and 28017)
-* Redis (6379)
-* RabbitMQ (5672 and 15672)
-* Metabase (5000)
-
-Updating the default Metabase configuration:
-
-1. Ensure you're starting from a completely clean container (docker-compose down && docker-compose up)
-1. Crawl a small org to populate Mongo so you have schema/sample data to work with
-1. Open metabase and configure the questions, dashboard, etc.
-  1. REMEMBER: Any changes you make will be persisted
-1. Copy the Metabase database to the docker/metabase folder in the repository:
-  ```docker cp docker_metabase_1:/var/opt/metabase/dockercrawler.db.mv.db .```
 
 TODO:
 
