@@ -13,6 +13,7 @@ RUN cd /tmp && npm install --production
 RUN cp -a /tmp/node_modules /opt/ospo-ghcrawler/
 
 WORKDIR /opt/ospo-ghcrawler
+ENV PATH="/opt/ospo-ghcrawler/bin:$PATH"
 ADD . /opt/ospo-ghcrawler
 
 CMD ["npm", "start"]
