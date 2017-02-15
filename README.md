@@ -12,11 +12,11 @@ This is an evolving solution and the steps for running will be simplified publis
 1. Clone the [Microsoft/ospo-ghcrawler](https://github.com/Microsoft/ospo-ghcrawler.git) and [Microsoft/crawler-dashboard](https://github.com/Microsoft/crawler-dashboard.git) repos.
 1. Set environment variable CRAWLER_GITHUB_TOKENS to the tokens and traits you want to use. For example, ```export CRAWLER_GITHUB_TOKENS="<token1>#public;<token2>#admin"```.
 1. In a command prompt go to ospo-ghcrawler/docker and run “docker-compose up”.
-1. Once the containers are up and running, start the servie crawling by going to Crawler Dashboard (```http://localhost:4000```). On the righthand side, change the ```crawler/count``` to 1 and click ```Update``` button.  You should see some crawler related messages in the container output.
-1. Queue a GitHub organization to be crawled with ```docker exec docker_crawler_1 bake contoso-d``` or a specific repository with ```docker exec docker_crawler_1 bake contoso-d/angle```.
-1. Go to Metabase (http://localhost:5000)
+1. Once the containers are up and running, start the service crawling by going to Crawler Dashboard (```http://localhost:4000```). On the righthand side, change the ```crawler/count``` to 1 and click ```Update``` button.  You should see some crawler related messages in the container output.
+1. Queue a GitHub organization or repo to be crawled using either ```docker exec docker_crawler_1 bake contcoso-d``` for an org or ```docker exec docker_crawler_1 bake contoso-d/angle``` for a specific repo.
+1. Check out the data in Metabase as it data flows in.  Go to Metabase (```http://localhost:5000```)
 
-Exposed endpoints:
+By default the containers  expose a number of endpoints at different ports on localhost. Note that if you have trouble starting the containers due to port conflicts, either shutdown your services using these ports or edit the docker/docker-compose.yml file to change the ports.
 
 * Crawler Dashboard (4000)
 * Crawler (3000)
