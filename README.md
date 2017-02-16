@@ -10,6 +10,8 @@ For small to medium production systems you can run in Docker with Mongo and Rabb
 This is an evolving solution and the steps for running will be simplified published, ready-to-use images on Docker Hub. For now, follow these steps
 
 1. Clone the [Microsoft/ospo-ghcrawler](https://github.com/Microsoft/ospo-ghcrawler.git) and [Microsoft/crawler-dashboard](https://github.com/Microsoft/crawler-dashboard.git) repos.
+1. In a command prompt, go to ospo-ghcrawler and run ```npm install```
+1. In a command prompt, go to crawler-dashboard and run ```npm install``` 
 1. Set environment variable CRAWLER_GITHUB_TOKENS to the tokens and traits you want to use. For example, ```export CRAWLER_GITHUB_TOKENS="<token1>#public;<token2>#admin"```.
 1. In a command prompt go to ospo-ghcrawler/docker and run “docker-compose up”.
 1. Once the containers are up and running, start the service crawling by going to Crawler Dashboard (```http://localhost:4000```). On the righthand side, change the ```crawler/count``` to 1 and click ```Update``` button.  You should see some crawler related messages in the container output.
