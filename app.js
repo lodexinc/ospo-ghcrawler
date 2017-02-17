@@ -12,7 +12,7 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 const sendHelper = require('./middleware/sendHelper');
 
-mockInsights.setup(config.get('CRAWLER_INSIGHTS_KEY'), true);
+mockInsights.setup(config.get('CRAWLER_INSIGHTS_KEY') || 'mock', true);
 
 const mode = config.get('CRAWLER_MODE') || '';
 
@@ -64,6 +64,7 @@ app.use(requestHandler);
 requestHandler.init = (app, callback) => {
   service.ensureInitialized().then(
     () => {
+      service.run();
       console.log('Service initialized');
       // call the callback but with no args.  An arg indicates an error.
       callback();
