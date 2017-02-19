@@ -142,60 +142,12 @@
       "outFiles": []
     },
     {
-      "name": "OldNew",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/bin/www.js",
-      "stopOnEntry": false,
-      "args": [],
-      "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "localhost",
-        "CRAWLER_MODE": "OldNew",
-        "CRAWLER_OPTIONS_PROVIDER": "defaults"
-      },
-      "console": "internalConsole",
-      "sourceMaps": false,
-      "outFiles": []
-    },
-    {
       "name": "In Memory",
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/bin/www.js",
       "stopOnEntry": false,
       "args": [],
-      "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "localhost",
-        "CRAWLER_MODE": "InMemory",
-        "CRAWLER_OPTIONS_PROVIDER": "memory",
-        "CRAWLER_INSIGHTS_KEY": "mock"
-      },
-      "console": "internalConsole",
-      "sourceMaps": false,
-      "outFiles": []
-    },
-    {
-      "name": "Busie",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/busie.js",
-      "stopOnEntry": false,
-      "args": [
-        "ghcrawlerdev",
-        "amqp"
-      ],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
