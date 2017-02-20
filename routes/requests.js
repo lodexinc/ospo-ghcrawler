@@ -3,21 +3,73 @@
 
 const auth = require('../middleware/auth');
 const express = require('express');
+const expressJoi = require('express-joi');
 const Request = require('ghcrawler').request;
 const TraversalPolicy = require('ghcrawler').traversalPolicy;
 const wrap = require('../middleware/promiseWrap');
+
+const requestsSchema = {
+  queue: expressJoi.Joi.types.String().alphanum().min(2).max(50).required(),
+  count: expressJoi.Joi.types.Number().integer().min(0).max(100)
+};
+const queueSchema = {
+  name: expressJoi.Joi.types.String().alphanum().min(2).max(50).required()
+};
 
 let crawlerService = null;
 const router = express.Router();
 
 router.post('/', auth.validate, wrap(function* (request, response, next) {
-  const body = request.body;
-  const policy = TraversalPolicy.getPolicy(body.policy);
-  body.policy = policy || body.policy;
-  const crawlRequest = Request.adopt(body);
-  yield crawlerService.crawler.queue(crawlRequest);
+  yield queueRequests(request.body, 'normal');
   response.sendStatus(201);
 }));
+
+router.post('/:queue', auth.validate, wrap(function* (request, response) {
+  yield queueRequests(request.body, request.params.queue || 'normal');
+  response.sendStatus(201);
+}));
+
+router.get('/:queue', auth.validate, expressJoi.joiValidate(requestsSchema), wrap(function* (request, response) {
+  const requests = yield crawlerService.getRequests(request.params.queue, parseInt(request.query.count, 10), false);
+  response.json(requests);
+}));
+
+router.delete('/:queue', auth.validate, expressJoi.joiValidate(requestsSchema), wrap(function* (request, response) {
+  const requests = yield crawlerService.getRequests(request.params.queue, parseInt(request.query.count, 10), true);
+  response.json(requests);
+}));
+
+function queueRequests(requestSpecs, queueName) {
+  requestSpecs = Array.isArray(requestSpecs) ? requestSpecs : [requestSpecs];
+  const requests = requestSpecs.map(spec => rationalizeRequest(spec));
+  return crawlerService.queue(requests, queueName);
+}
+
+function rationalizeRequest(request) {
+  let result = request;
+  if (typeof request === 'string') {
+    request = buildRequestFromSpec(request);
+  }
+  return Request.adopt(request);
+}
+
+function buildRequestFromSpec(spec) {
+  let crawlType = null;
+  let crawlUrl = 'https://api.github.com/';
+  if (crawlTarget.indexOf('/') > -1) {
+    crawlType = 'repo';
+    crawlUrl += 'repos/' + crawlTarget;
+  } else {
+    crawlType = 'org';
+    crawlUrl += 'orgs/' + crawlTarget;
+  }
+
+  const request = {
+    "type": crawlType,
+    "url": crawlUrl,
+    "policy": "default"
+  };
+}
 
 function setup(service) {
   crawlerService = service;
