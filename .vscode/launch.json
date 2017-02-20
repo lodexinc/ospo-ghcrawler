@@ -179,7 +179,7 @@
       "env": {
         "NODE_ENV": "localhost",
         "CRAWLER_MODE": "InMemory",
-        "CRAWLER_OPTIONS_PROVIDER": "defaults",
+        "CRAWLER_OPTIONS_PROVIDER": "memory",
         "CRAWLER_INSIGHTS_KEY": "mock"
       },
       "console": "internalConsole",
