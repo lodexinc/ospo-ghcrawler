@@ -20,29 +20,46 @@ let crawlerService = null;
 const router = express.Router();
 
 router.post('/', auth.validate, wrap(function* (request, response, next) {
-  yield queueRequests(request.body, 'normal');
+  const result = yield queueRequests(request.body, 'normal');
+  if (!result) {
+    return response.sendStatus(404);
+  }
   response.sendStatus(201);
 }));
 
 router.post('/:queue', auth.validate, wrap(function* (request, response) {
-  yield queueRequests(request.body, request.params.queue || 'normal');
+  const result = yield queueRequests(request.body, request.params.queue || 'normal');
+  if (!result) {
+    return response.sendStatus(404);
+  }
   response.sendStatus(201);
 }));
 
 router.get('/:queue', auth.validate, expressJoi.joiValidate(requestsSchema), wrap(function* (request, response) {
   const requests = yield crawlerService.getRequests(request.params.queue, parseInt(request.query.count, 10), false);
+  if (!requests) {
+    return response.sendStatus(404);
+  }
   response.json(requests);
 }));
 
 router.delete('/:queue', auth.validate, expressJoi.joiValidate(requestsSchema), wrap(function* (request, response) {
   const requests = yield crawlerService.getRequests(request.params.queue, parseInt(request.query.count, 10), true);
+  if (!requests) {
+    return response.sendStatus(404);
+  }
   response.json(requests);
 }));
 
 function queueRequests(requestSpecs, queueName) {
   requestSpecs = Array.isArray(requestSpecs) ? requestSpecs : [requestSpecs];
   const requests = requestSpecs.map(spec => rationalizeRequest(spec));
-  return crawlerService.queue(requests, queueName);
+  return crawlerService.queue(requests, queueName).catch(error => {
+    if (error.message.startsWith('Queue not found')) {
+      return null;
+    }
+    throw error;
+  });
 }
 
 function rationalizeRequest(request) {
