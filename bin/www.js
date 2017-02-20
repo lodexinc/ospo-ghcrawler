@@ -81,5 +81,8 @@ function onError(error) {
  */
 function onListening() {
   const addr = server.address();
-  console.log(`Crawler service listening on port ${typeof addr === 'string' ? addr : addr.port}`);
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  console.log(`Crawler service listening on ${bind}`);
 }
