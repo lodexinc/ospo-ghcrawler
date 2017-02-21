@@ -8,7 +8,7 @@ The easiest way try our the crawler is to run it in memory. You can get up and r
 1. Run ```npm install``` in the clone repo directory to install the prerequisites.
 1. Run the crawler using ```node bin/www.js```.
 
-Once the service is up and running, you should see some crawler related messages in the console output every few seconds. You can control the crawler using the ```cc``` command line tool described below. Note that since you are running in memory, if you kill the crawler process, all work will be lost. This mode is great for playing around with the crawler or testing.
+Once the service is up and running, you should see some crawler related messages in the console output every few seconds. You can control the crawler either using the ```cc``` command line tool or a brower-based dashboard both of which are described below. Note that since you are running in memory, if you kill the crawler process, all work will be lost. This mode is great for playing around with the crawler or testing.
 
 # Running Crawler-In-A-Box (CIABatta)
 If you want to persist the data gathered and create some insight dashboards in small to medium production system, you can run the crawler in Docker with Mongo, Rabbit, and Redis using the Crawler-in-a-box (CIABatta) approach. This setup also includes Metabase for building browser-based insgihts and gives you a browser-based control-panel for observing and controlling the crawler service.
@@ -18,7 +18,7 @@ If you want to persist the data gathered and create some insight dashboards in s
 1. Clone the [Microsoft/ospo-ghcrawler](https://github.com/Microsoft/ospo-ghcrawler.git) and [Microsoft/crawler-dashboard](https://github.com/Microsoft/crawler-dashboard.git) repos.
 1. In a command prompt go to ```ospo-ghcrawler/docker``` and run ```docker-compose up```.
 
-Once the containers are up and running, you should see some crawler related messages in the container's console output every few seconds. You can control the crawler either using the ```cc``` command line tool or a brower-based dashboard both of which are described below. To get insights with Metabase head over to http://localhost:5000 and query the data being collected.
+Once the containers are up and running, you should see some crawler related messages in the container's console output every few seconds. You can control the crawler either using the ```cc``` command line tool or a brower-based dashboard both of which are described below.
 
 You can also hookup directly to the crawler infrastructure. By default the containers expose a number of endpoints at different ports on localhost. Note that if you have trouble starting the containers due to port conflicts, either shutdown your services using these ports or edit the docker/docker-compose.yml file to change the ports.
 
@@ -27,7 +27,7 @@ You can also hookup directly to the crawler infrastructure. By default the conta
 * MongoDB (27017 and 28017) -- Direct access to the Mongo DB
 * Redis (6379) -- Observe what's happening in Redis. Not much else for you to do here
 * RabbitMQ (5672 and 15672) -- Hit http://localhost:15672 with a browser to see and maange the RabbitMQ queues
-* Metabase (5000) -- Hit http://localhost:5000 to get live insights in your browser
+* Metabase (5000) -- Hit http://localhost:5000 to get live insights in your browser via Metabase
 
 # Deploying native
 For ultimate flexibility, the crawler and associated bits can be run directly on VMs or as an app service. This structure typically uses cloud-based infrastructure for queuing, storage and redis. For example, this project comes with adapters for Azure Service Bus queuing and Azure Blob storage. The APIs on these adpaters is very slim so it is easy to for you to implement (and contribute) more.
@@ -42,10 +42,10 @@ Given a running crawler service (see above), you can control it using either a s
 The *crawler-cli* (aka ```cc```) can run interactively or as a single command processor and enables a number of basic operations.  For now the crawler-cli is not published as an npm. Instead, [clone its repo]((https://github.com/Microsoft/crawler-cli.git), run ```npm install``` and run the command line using
 
 ```
-node bin/cc
+node bin/cc -i
 ```
 
-The app's built-in help has general usage info and more details can be found in [the project's readme](https://github.com/Microsoft/crawler-cli/blob/develop/README.md). A typical command sequence shown in the snippet below configures the crawler with a set of GitHub tokens, sets the org filtering and then queues and starts the processing of the org.
+The app's built-in help has general usage info and more details can be found in [the project's readme](https://github.com/Microsoft/crawler-cli/blob/develop/README.md). A typical command sequence shown in the snippet below starts ```cc``` in interactive mode, configures the crawler with a set of GitHub tokens, sets the org filtering and then queues and starts the processing of the org.
 
 ```
 > node bin/cc -i
@@ -59,18 +59,11 @@ http://localhost:3000> exit
 
 ## Browser dashboard
 
-Some configurations (e.g., Docker) include a browser-based dashboard. This gives you live feedback on what the crawler is doing as well as better control over the crawler's queues and configuration. Note the dashboard has only partial function when used with the memory-based crawler service as it uses Redis to talk to the crawlers for certain operations.
+The crawler dashboard gives you live feedback on what the crawler is doing as well as better control over the crawler's queues and configuration. Some configurations (e.g., Docker) include and start the dashboard for free. If you need to deploy the dashboard explicitly, clone the [Microsoft/crawler-dashboard](https://github.com/Microsoft/crawler-dashboard.git) repo and follow the instructions in [the README found there](https://github.com/Microsoft/crawler-dashboard/blob/develop/README.md).
 
-### Running the dashboard
-If you are using Docker setup, the dashboard will startup for free and be listening on http://localhost:4000. If you want to deploy or run the dashboard explicitly, clone the [Microsoft/crawler-dashboard](https://github.com/Microsoft/crawler-dashboard.git) repo and follow the instructions in [the README found there](https://github.com/Microsoft/crawler-dashboard/blob/develop/README.md).
+Once the dashboard service is up and running, point your browser at the dashboard endpoing (http://localhost:4000 by default).
 
-## Configuring and controlling the crawler
-
-#### Reconfigure crawling
-`curl -i -H "X-token: test1" -H "Content-Type: application/json" -X PATCH -d '[{ "op": "replace", "path": "/crawler/count", "value": 1 }, { "op": "replace", "path": "/crawler/orgList", "value": ["contoso-d"] }, { "op": "replace", "path": "/queuing/credit", "value": 10 }]' http://localhost:3000/config`
-
-#### Add to Queue
-`curl -i -H "X-token: test1" -H "Content-Type: application/json" -X POST -d '{"type": "org", "url": "https://api.github.com/orgs/contoso-d", "policy": "reprocessAndDiscover"}' http://localhost:3000/requests`
+Note that the dashboard does not report queue message rates (top right graph) when used with the memory-based crawler service as that mechanism requires Redis to talk record activity.
 
 # Tips
 
