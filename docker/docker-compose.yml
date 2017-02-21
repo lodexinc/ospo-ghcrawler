@@ -27,15 +27,16 @@ dashboard:
     - DEBUG_ALLOW_HTTP=1
     - CRAWLER_REDIS_URL=redis
     - CRAWLER_NAME=crawlerdocker
+    - CRAWLER_SERVICE_URL=http://crawler:3000
   links:
     - redis
+    - crawler
 crawler:
   build: ..
   links:
      - mongo
      - redis
      - rabbitmq
-     - dashboard
   ports:
     - "3000:3000"
   environment:
@@ -48,6 +49,6 @@ crawler:
     - CRAWLER_QUEUE_PREFIX=crawlerdocker
     - CRAWLER_QUEUE_PROVIDER=amqp
     - CRAWLER_AMQP_URL=amqp://rabbitmq:5672
-    - CRAWLER_RABBIT_MANAGER_ENDPOINT=http://guest:guest@localhost:15672
+    - CRAWLER_RABBIT_MANAGER_ENDPOINT=http://guest:guest@rabbitmq:15672
     - CRAWLER_GITHUB_TOKENS=${CRAWLER_GITHUB_TOKENS}
     - CRAWLER_OPTIONS_PROVIDER=redis
