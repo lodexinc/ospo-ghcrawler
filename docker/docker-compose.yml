@@ -18,35 +18,36 @@ metabase:
     - "5000:3000"
   links:
     - mongo
-dashboard:
-  build: ../../crawler-dashboard
-  ports:
-    - "4000:4000"
-  environment:
-    - NODE_ENV=localhost
-    - DEBUG_ALLOW_HTTP=1
-    - CRAWLER_REDIS_URL=redis
-    - CRAWLER_NAME=crawlerdocker
-  links:
-    - redis
-crawler:
-  build: ..
-  links:
-     - mongo
-     - redis
-     - rabbitmq
-     - dashboard
-  ports:
-    - "3000:3000"
-  environment:
-    - NODE_ENV=localhost
-    - CRAWLER_NAME=crawlerdocker
-    - CRAWLER_QUEUE_PREFIX=crawlerdocker
-    - CRAWLER_MODE=StandardWithoutEvents
-    - CRAWLER_REDIS_URL=redis
-    - CRAWLER_STORE_PROVIDER=mongo
-    - CRAWLER_MONGO_URL=mongodb://mongo:27017/ghcrawler
-    - CRAWLER_QUEUE_PROVIDER=amqp
-    - CRAWLER_AMQP_URL=amqp://rabbitmq:5672
-    - CRAWLER_GITHUB_TOKENS=${CRAWLER_GITHUB_TOKENS}
-    - CRAWLER_OPTIONS_PROVIDER=redis
+# dashboard:
+#   build: ../../crawler-dashboard
+#   ports:
+#     - "4000:4000"
+#   environment:
+#     - NODE_ENV=localhost
+#     - DEBUG_ALLOW_HTTP=1
+#     - CRAWLER_REDIS_URL=redis
+#     - CRAWLER_NAME=crawlerdocker
+#   links:
+#     - redis
+# crawler:
+#   build: ..
+#   links:
+#      - mongo
+#      - redis
+#      - rabbitmq
+#      - dashboard
+#   ports:
+#     - "3000:3000"
+#   environment:
+#     - NODE_ENV=localhost
+#     - CRAWLER_NAME=crawlerdocker
+#     - CRAWLER_MODE=StandardWithoutEvents
+#     - CRAWLER_REDIS_URL=redis
+#     - CRAWLER_STORE_PROVIDER=mongo
+#     - CRAWLER_MONGO_URL=mongodb://mongo:27017/ghcrawler
+#     - CRAWLER_QUEUE_PREFIX=crawlerdocker
+#     - CRAWLER_QUEUE_PROVIDER=amqp
+#     - CRAWLER_AMQP_URL=amqp://rabbitmq:5672
+#     - CRAWLER_RABBIT_MANAGER_ENDPOINT=http://guest:guest@localhost:15672
+#     - CRAWLER_GITHUB_TOKENS=${CRAWLER_GITHUB_TOKENS}
+#     - CRAWLER_OPTIONS_PROVIDER=redis

@@ -66,7 +66,8 @@
         "CRAWLER_STORE_PROVIDER": "mongo",
         "CRAWLER_MONGO_URL": "mongodb://localhost:27017/ghcrawler",
         "CRAWLER_QUEUE_PROVIDER": "amqp",
-        "CRAWLER_AMQP_URL": "amqp://localhost:5672"
+        "CRAWLER_AMQP_URL": "amqp://localhost:5672",
+        "CRAWLER_RABBIT_MANAGER_ENDPOINT": "http://guest:guest@localhost:15672"
       },
       "console": "internalConsole",
       "sourceMaps": false,
