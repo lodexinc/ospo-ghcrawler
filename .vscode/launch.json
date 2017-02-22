@@ -74,7 +74,7 @@
       "outFiles": []
     },
     {
-      "name": "Standard",
+      "name": "Local Standard",
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/bin/www.js",
@@ -96,7 +96,7 @@
       "outFiles": []
     },
     {
-      "name": "StandardWithoutEvents",
+      "name": "Local StandardWithoutEvents",
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/bin/www.js",
@@ -110,7 +110,8 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
-        "CRAWLER_MODE": "StandardWithoutEvents",
+        "CRAWLER_MODE": "Standard",
+        "CRAWLER_EVENT_PROVIDER": "",
         "CRAWLER_OPTIONS_PROVIDER": "redis",
         "DEBUG.off": "amqp10:client,amqp10:link:receiver"
       },
@@ -133,7 +134,8 @@
       ],
       "env": {
         "NODE_ENV": "development",
-        "CRAWLER_MODE": "StandardWithoutEvents",
+        "CRAWLER_MODE": "Standard",
+        "CRAWLER_EVENT_PROVIDER": "",
         "CRAWLER_OPTIONS_PROVIDER": "redis",
         "CRAWLER_NAME": "crawlerdev",
         "CRAWLER_QUEUE_PREFIX": "crawlerdev"
