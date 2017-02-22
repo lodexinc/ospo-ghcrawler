@@ -42,7 +42,7 @@
     "redis-metrics": "^0.4.1",
     "redis-rate-limiter": "jeffmcaffer/redis-rate-limiter",
     "redlock": "2.0.1",
-    "refreshing-config": "^0.1.0",
+    "refreshing-config": "^0.1.2",
     "refreshing-config-redis": "^0.1.0",
     "winston": "2.2.0",
     "winston-azure-application-insights": "^1.1.1"

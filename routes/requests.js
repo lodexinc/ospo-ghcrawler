@@ -19,15 +19,7 @@ const queueSchema = {
 let crawlerService = null;
 const router = express.Router();
 
-router.post('/', auth.validate, wrap(function* (request, response, next) {
-  const result = yield queueRequests(request.body, 'normal');
-  if (!result) {
-    return response.sendStatus(404);
-  }
-  response.sendStatus(201);
-}));
-
-router.post('/:queue', auth.validate, wrap(function* (request, response) {
+router.post('/:queue?', auth.validate, wrap(function* (request, response) {
   const result = yield queueRequests(request.body, request.params.queue || 'normal');
   if (!result) {
     return response.sendStatus(404);

@@ -27,6 +27,12 @@ router.get('/', auth.validate, function (request, response, next) {
   response.json(result).status(200).end();
 });
 
+router.post('/tokens', auth.validate, (request, response, next) => {
+  const body = request.body;
+  crawlerService.fetcher.tokenFactory.setTokens(body);
+  response.sendStatus(200);
+});
+
 function setup(service) {
   crawlerService = service;
   return router;

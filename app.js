@@ -24,7 +24,6 @@ app.use(logger('dev'));
 app.use(sendHelper());
 app.use('/status', require('./routes/status')(service));
 app.use('/config', require('./routes/config')(service));
-app.use('/tokens', require('./routes/tokens')(service));
 app.use('/requests', require('./routes/requests')(service));
 app.use('/queues', require('./routes/queues')(service));
 
