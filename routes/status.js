@@ -1,13 +1,13 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+const auth = require('../middleware/auth');
 const express = require('express');
 
 let crawlerService = null;
 const router = express.Router();
 
-// router.get('/', auth.validate, function (request, response, next) {
-router.get('/', function (request, response, next) {
+router.get('/', auth.validate, function (request, response, next) {
   // Gets some of the live, non-configurable values and put them in at the root
   const result = {};
   result.actualCount = crawlerService.status();
