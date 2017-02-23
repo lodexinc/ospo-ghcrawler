@@ -3,48 +3,29 @@
 
 const appInsights = require('applicationinsights');
 const auth = require('./middleware/auth');
+const bodyParser = require('body-parser');
 const config = require('painless-config');
-const mockInsights = require('./lib/mockInsights');
-const OspoCrawler = require('./lib/ospoCrawler');
 const CrawlerService = require('ghcrawler').crawlerService;
 const express = require('express');
 const logger = require('morgan');
-const bodyParser = require('body-parser');
+const mockInsights = require('./lib/mockInsights');
+const OspoCrawler = require('./lib/ospoCrawler');
 const sendHelper = require('./middleware/sendHelper');
 
-mockInsights.setup(config.get('CRAWLER_INSIGHTS_KEY'), true);
-
+auth.initialize(config.get('CRAWLER_SERVICE_AUTH_TOKEN') || 'secret', config.get('CRAWLER_SERVICE_FORCE_AUTH'));
+mockInsights.setup(config.get('CRAWLER_INSIGHTS_KEY') || 'mock', true);
 const mode = config.get('CRAWLER_MODE') || '';
-
 const service = OspoCrawler.createService(mode);
-
-const authConfig = {
-  redisUrl: config.get('CRAWLER_REDIS_URL'),
-  redisPort: config.get('CRAWLER_REDIS_PORT'),
-  redisAccessKey: config.get('CRAWLER_REDIS_ACCESS_KEY'),
-  forceAuth: true || config.get('FORCE_AUTH'),
-  sessionSecret: config.get('WITNESS_SESSION_SECRET'),
-  aadConfig: {
-    clientID: config.get('WITNESS_AAD_CLIENT_ID'),
-    clientSecret: config.get('WITNESS_AAD_CLIENT_SECRET'),
-    callbackURL: config.get('WITNESS_AAD_CALLBACK_URL'),
-    resource: config.get('WITNESS_AAD_RESOURCE'),
-    useCommonEndpoint: true
-  }
-};
-
 const app = express();
 
 // It's safe to set limitation to 2mb.
 app.use(bodyParser.json());
 app.use(logger('dev'));
 app.use(sendHelper());
-
-// auth.initialize(app, authConfig);
-
 app.use('/status', require('./routes/status')(service));
 app.use('/config', require('./routes/config')(service));
 app.use('/requests', require('./routes/requests')(service));
+app.use('/queues', require('./routes/queues')(service));
 
 // to keep AlwaysOn flooding logs with errors
 app.get('/', function (request, response, next) {
@@ -64,6 +45,7 @@ app.use(requestHandler);
 requestHandler.init = (app, callback) => {
   service.ensureInitialized().then(
     () => {
+      service.run();
       console.log('Service initialized');
       // call the callback but with no args.  An arg indicates an error.
       callback();

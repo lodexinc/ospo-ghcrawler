@@ -66,14 +66,15 @@
         "CRAWLER_STORE_PROVIDER": "mongo",
         "CRAWLER_MONGO_URL": "mongodb://localhost:27017/ghcrawler",
         "CRAWLER_QUEUE_PROVIDER": "amqp",
-        "CRAWLER_AMQP_URL": "amqp://localhost:5672"
+        "CRAWLER_AMQP_URL": "amqp://localhost:5672",
+        "CRAWLER_RABBIT_MANAGER_ENDPOINT": "http://guest:guest@localhost:15672"
       },
       "console": "internalConsole",
       "sourceMaps": false,
       "outFiles": []
     },
     {
-      "name": "Standard",
+      "name": "Local Standard",
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/bin/www.js",
@@ -95,7 +96,7 @@
       "outFiles": []
     },
     {
-      "name": "StandardWithoutEvents",
+      "name": "Local StandardWithoutEvents",
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/bin/www.js",
@@ -109,7 +110,8 @@
       ],
       "env": {
         "NODE_ENV": "localhost",
-        "CRAWLER_MODE": "StandardWithoutEvents",
+        "CRAWLER_MODE": "Standard",
+        "CRAWLER_EVENT_PROVIDER": "",
         "CRAWLER_OPTIONS_PROVIDER": "redis",
         "DEBUG.off": "amqp10:client,amqp10:link:receiver"
       },
@@ -132,32 +134,11 @@
       ],
       "env": {
         "NODE_ENV": "development",
-        "CRAWLER_MODE": "StandardWithoutEvents",
+        "CRAWLER_MODE": "Standard",
+        "CRAWLER_EVENT_PROVIDER": "",
         "CRAWLER_OPTIONS_PROVIDER": "redis",
         "CRAWLER_NAME": "crawlerdev",
         "CRAWLER_QUEUE_PREFIX": "crawlerdev"
-      },
-      "console": "internalConsole",
-      "sourceMaps": false,
-      "outFiles": []
-    },
-    {
-      "name": "OldNew",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/bin/www.js",
-      "stopOnEntry": false,
-      "args": [],
-      "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "localhost",
-        "CRAWLER_MODE": "OldNew",
-        "CRAWLER_OPTIONS_PROVIDER": "defaults"
       },
       "console": "internalConsole",
       "sourceMaps": false,
@@ -170,32 +151,6 @@
       "program": "${workspaceRoot}/bin/www.js",
       "stopOnEntry": false,
       "args": [],
-      "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
-      "runtimeExecutable": null,
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "localhost",
-        "CRAWLER_MODE": "InMemory",
-        "CRAWLER_OPTIONS_PROVIDER": "memory",
-        "CRAWLER_INSIGHTS_KEY": "mock"
-      },
-      "console": "internalConsole",
-      "sourceMaps": false,
-      "outFiles": []
-    },
-    {
-      "name": "Busie",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/busie.js",
-      "stopOnEntry": false,
-      "args": [
-        "ghcrawlerdev",
-        "amqp"
-      ],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
