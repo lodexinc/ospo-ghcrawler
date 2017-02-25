@@ -65,15 +65,15 @@ function rationalizeRequest(request) {
 function buildRequestFromSpec(spec) {
   let crawlType = null;
   let crawlUrl = 'https://api.github.com/';
-  if (crawlTarget.indexOf('/') > -1) {
+  if (spec.indexOf('/') > -1) {
     crawlType = 'repo';
-    crawlUrl += 'repos/' + crawlTarget;
+    crawlUrl += 'repos/' + spec;
   } else {
     crawlType = 'org';
-    crawlUrl += 'orgs/' + crawlTarget;
+    crawlUrl += 'orgs/' + spec;
   }
 
-  const request = {
+  return {
     "type": crawlType,
     "url": crawlUrl,
     "policy": "default"
