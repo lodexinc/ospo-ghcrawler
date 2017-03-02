@@ -26,6 +26,7 @@ app.use('/status', require('./routes/status')(service));
 app.use('/config', require('./routes/config')(service));
 app.use('/requests', require('./routes/requests')(service));
 app.use('/queues', require('./routes/queues')(service));
+app.use('/deadletters', require('./routes/deadletters')(service));
 
 // to keep AlwaysOn flooding logs with errors
 app.get('/', function (request, response, next) {
