@@ -134,11 +134,7 @@
       ],
       "env": {
         "NODE_ENV": "development",
-        "CRAWLER_MODE": "Standard",
-        "CRAWLER_EVENT_PROVIDER": "",
-        "CRAWLER_OPTIONS_PROVIDER": "redis",
-        "CRAWLER_NAME": "crawlerdev",
-        "CRAWLER_QUEUE_PREFIX": "crawlerdev"
+        "CRAWLER_OPTIONS_PROVIDER": "redis"
       },
       "console": "internalConsole",
       "sourceMaps": false,
