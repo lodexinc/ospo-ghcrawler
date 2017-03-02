@@ -10,8 +10,15 @@ const wrap = require('../middleware/promiseWrap');
 let crawlerService = null;
 const router = express.Router();
 
+router.head('/', auth.validate, wrap(function* (request, response) {
+  const count = yield crawlerService.getDeadletterCount();
+  response.setHeader('X-Total-Count', count);
+  response.status(204).end();
+}));
+
 router.get('/', auth.validate, wrap(function* (request, response) {
   const requests = yield crawlerService.listDeadletters();
+  response.setHeader('X-Total-Count', requests.length);
   response.json(requests);
 }));
 
