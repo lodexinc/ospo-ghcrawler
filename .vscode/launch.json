@@ -111,7 +111,7 @@
       "env": {
         "NODE_ENV": "localhost",
         "CRAWLER_MODE": "Standard",
-        "CRAWLER_EVENT_PROVIDER": "",
+        "CRAWLER_EVENT_PROVIDER": "none",
         "CRAWLER_OPTIONS_PROVIDER": "redis",
         "DEBUG.off": "amqp10:client,amqp10:link:receiver"
       },
@@ -196,7 +196,7 @@
       "name": "Attach to Process",
       "type": "node",
       "request": "attach",
-      "processId": "${command.PickProcess}",
+      "processId": "${command:PickProcess}",
       "port": 5858,
       "sourceMaps": false,
       "outFiles": []
