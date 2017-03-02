@@ -22,13 +22,15 @@ router.get('/', auth.validate, wrap(function* (request, response) {
   response.json(requests);
 }));
 
-// router.delete('/:queue', auth.validate, expressJoi.joiValidate(requestsSchema), wrap(function* (request, response) {
-//   const requests = yield crawlerService.getRequests(request.params.queue, parseInt(request.query.count, 10), true);
-//   if (!requests) {
-//     return response.sendStatus(404);
-//   }
-//   response.json(requests);
-// }));
+router.get('/:urn', auth.validate, wrap(function* (request, response) {
+  const document = yield crawlerService.getDeadletter(request.params.urn);
+  response.json(document);
+}));
+
+router.delete('/:urn', auth.validate, wrap(function* (request, response) {
+  yield crawlerService.deleteDeadletter(request.params.urn);
+  response.status(204).end();
+}));
 
 function setup(service) {
   crawlerService = service;
