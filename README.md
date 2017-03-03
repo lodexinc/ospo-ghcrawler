@@ -148,3 +148,11 @@ Production Docker deployment using Kubernetes or the like has been discussed but
   "CRAWLER_DOCLOG_STORAGE_KEY": "[SECRET]"
 }
 ```
+
+# Contributing
+
+The project team is more than happy to take contributions and suggestions.
+
+To start working, run ```npm install``` in the repository folder to install the required dependencies. See the usage section for pointers on how to run.
+
+This project has adopted the [Microsoft Open Source Code of Conduct](https://opensource.microsoft.com/codeofconduct/). For more information see the [Code of Conduct FAQ](https://opensource.microsoft.com/codeofconduct/faq/) or contact [opencode@microsoft.com](mailto:opencode@microsoft.com) with any additional questions or comments.
