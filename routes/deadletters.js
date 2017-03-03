@@ -28,7 +28,12 @@ router.get('/:urn', auth.validate, wrap(function* (request, response) {
 }));
 
 router.delete('/:urn', auth.validate, wrap(function* (request, response) {
-  yield crawlerService.deleteDeadletter(request.params.urn);
+  let requeue = request.query.requeue;
+  if (requeue) {
+    yield crawlerService.requeueDeadletter(request.params.urn, requeue);
+  } else {
+    yield crawlerService.deleteDeadletter(request.params.urn);
+  }
   response.status(204).end();
 }));
 
