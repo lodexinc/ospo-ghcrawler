@@ -19,7 +19,7 @@ const service = OspoCrawler.createService(mode);
 const app = express();
 
 // It's safe to set limitation to 2mb.
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '2mb'}));
 app.use(logger('dev'));
 app.use(sendHelper());
 app.use('/status', require('./routes/status')(service));

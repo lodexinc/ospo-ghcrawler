@@ -47,7 +47,7 @@ function queueRequests(requestSpecs, queueName) {
   requestSpecs = Array.isArray(requestSpecs) ? requestSpecs : [requestSpecs];
   const requests = requestSpecs.map(spec => rationalizeRequest(spec));
   return crawlerService.queue(requests, queueName).catch(error => {
-    if (error.message.startsWith('Queue not found')) {
+    if (error.message && error.message.startsWith('Queue not found')) {
       return null;
     }
     throw error;
