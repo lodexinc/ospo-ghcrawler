@@ -15,8 +15,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "amqp10": "^3.4.1",
-    "amqplib": "jeffmcaffer/node-amqp10",
+    "amqp10": "noodlefrenzy/node-amqp10#issue295",
+    "amqplib": "^0.5.1",
     "applicationinsights": "^0.17.0",
     "azure-common": "github:geneh/azure-common",
     "azure-sb": "geneh/azure-sb",
