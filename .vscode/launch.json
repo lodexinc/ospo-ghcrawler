@@ -190,8 +190,9 @@
       "env": {
         "NODE_ENV": "localhost",
         "CRAWLER_MODE": "Standard",
-        "CRAWLER_EVENT_PROVIDER": "none",
-        "CRAWLER_OPTIONS_PROVIDER": "redis"
+        "CRAWLER_EVENT_PROVIDER": "webhook",
+        "CRAWLER_OPTIONS_PROVIDER": "redis",
+        "NODE_TLS_REJECT_UNAUTHORIZED": "0"
       },
       "console": "internalConsole",
       "sourceMaps": false,

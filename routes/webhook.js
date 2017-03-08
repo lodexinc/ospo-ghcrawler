@@ -35,7 +35,7 @@ router.post('/', wrap(function* (request, response, next) {
   if (event.repository && event.repository.private) {
     result.context.repoType = 'private';
   }
-  yield crawlerService.queue(result, 'immediate');
+  yield crawlerService.queue(result, 'events');
 
   response.status(200).end();
 }));

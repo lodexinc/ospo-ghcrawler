@@ -20,8 +20,16 @@ const app = express();
 
 app.use(logger('dev'));
 app.use(sendHelper());
-// put this before the json body parser so we get the raw bodies
-app.use('/webhook', bodyParser.raw({ type: '*/*' }), require('./routes/webhook')(service, config.get('CRAWLER_WEBHOOK_SECRET')));
+
+// If we should be listening for webhooks, add the route before the json body parser so we get the raw bodies.
+// Note also that the GitHub doc says events are capped at 5mb
+// TODO There is a race condition here.  Ideally we'd use the queuing.events.provider value to signal whether or not
+// to configure in the route.  At this point in the execution however, the options are not available. We could
+// put the route in all the time and disable it via the configuration however that might lead to turning it on and
+// off during a run and the queue may not be created or connected or ...
+if (config.get('CRAWLER_EVENT_PROVIDER') === 'webhook') {
+  app.use('/webhook', bodyParser.raw({ limit: '5mb', type: '*/*' }), require('./routes/webhook')(service, config.get('CRAWLER_WEBHOOK_SECRET')));
+}
 // It's safe to set limitation to 2mb.
 app.use(bodyParser.json({ limit: '2mb' }));
 app.use('/status', require('./routes/status')(service));
