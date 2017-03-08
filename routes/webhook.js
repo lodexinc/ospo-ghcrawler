@@ -13,17 +13,21 @@ let webhookSecret = null;
 const router = express.Router();
 
 router.post('/', wrap(function* (request, response, next) {
+  if (crawlerService.options.queuing.events.provider !== 'webhook') {
+    return error(request, response, 'Webhooks not enabled');
+  }
+  getLogger().verbose('Received', `Webhook event`, {delivery: request.headers['x-github-delivery']});
   const signature = request.headers['x-hub-signature'];
   const eventType = request.headers['x-github-event'];
 
   if (!signature || !eventType) {
-    return error(response, 'Missing signature or event type on GitHub webhook');
+    return error(request, response, 'Missing signature or event type on GitHub webhook');
   }
 
   const data = request.body;
   const computedSignature = 'sha1=' + crypto.createHmac('sha1', webhookSecret).update(data).digest('hex');
   if (!bufferEqual(new Buffer(signature), new Buffer(computedSignature))) {
-    return error(response, 'X-Hub-Signature does not match blob signature');
+    return error(request, response, 'X-Hub-Signature does not match blob signature');
   }
   const event = JSON.parse(request.body);
   const eventsUrl = event.repository ? event.repository.events_url : event.organization.events_url;
@@ -36,13 +40,20 @@ router.post('/', wrap(function* (request, response, next) {
     result.context.repoType = 'private';
   }
   yield crawlerService.queue(result, 'events');
+  getLogger().info('Queued', `Webhook event for ${eventsUrl}`, {delivery: request.headers['x-github-delivery']});
 
   response.status(200).end();
 }));
 
-function error(response, error) {
+function error(request, response, error) {
+  getLogger().error(error, { delivery: request.headers['x-github-delivery']});
   response.status(400);
+  response.setHeader('content-type', 'text/plain');
   response.end(JSON.stringify(error));
+}
+
+function getLogger() {
+  return crawlerService.options.logger;
 }
 
 function setup(service, secret) {
