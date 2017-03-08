@@ -96,6 +96,20 @@
       "outFiles": []
     },
     {
+      "name": "Prod Standard",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/www.js",
+      "cwd": "${workspaceRoot}",
+      "env": {
+        "NODE_ENV": "production",
+        "CRAWLER_MODE": "Standard",
+        "CRAWLER_OPTIONS_PROVIDER": "redis",
+        "NODE_TLS_REJECT_UNAUTHORIZED": "0"
+      },
+      "console": "internalConsole"
+    },
+    {
       "name": "Local StandardWithoutEvents",
       "type": "node",
       "request": "launch",
@@ -161,10 +175,10 @@
       "outFiles": []
     },
     {
-      "name": "Webhooks",
+      "name": "Local with Webhooks",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/serviceBusWebhookRunner.js",
+      "program": "${workspaceRoot}/bin/www.js",
       "stopOnEntry": false,
       "args": [],
       "cwd": "${workspaceRoot}",
@@ -174,7 +188,11 @@
         "--nolazy"
       ],
       "env": {
-        "NODE_ENV": "localhost"
+        "NODE_ENV": "localhost",
+        "CRAWLER_MODE": "Standard",
+        "CRAWLER_EVENT_PROVIDER": "webhook",
+        "CRAWLER_OPTIONS_PROVIDER": "redis",
+        "NODE_TLS_REJECT_UNAUTHORIZED": "0"
       },
       "console": "internalConsole",
       "sourceMaps": false,
