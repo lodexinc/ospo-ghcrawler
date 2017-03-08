@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const bl = require('buffer-equal-constant-time');
+const bufferEqual = require('buffer-equal-constant-time');
 const crypto = require('crypto');
 const express = require('express');
 const moment = require('moment');
+const Request = require('ghcrawler').request;
 const wrap = require('../middleware/promiseWrap');
 
 let crawlerService = null;
@@ -21,18 +22,18 @@ router.post('/', wrap(function* (request, response, next) {
 
   const data = request.body;
   const computedSignature = 'sha1=' + crypto.createHmac('sha1', webhookSecret).update(data).digest('hex');
-  if (!bufferEq(new Buffer(signature), new Buffer(computedSignature))) {
+  if (!bufferEqual(new Buffer(signature), new Buffer(computedSignature))) {
     return error('X-Hub-Signature does not match blob signature');
   }
   const event = JSON.parse(request.body);
   const eventsUrl = event.repository ? event.repository.events_url : event.organization.events_url;
-  const result = { type: 'event_trigger', url: `${eventsUrl}` };
+  const result = new Request('event_trigger', `${eventsUrl}`);
   result.payload = { body: event, etag: 1, fetchedAt: moment.utc().toISOString() };
   // requests off directly off the event feed do not need exclusivity
   result.requiresLock = false;
   // if the event is for a private repo, mark the request as needing private access.
   if (event.repository && event.repository.private) {
-    request.context.repoType = 'private';
+    result.context.repoType = 'private';
   }
   yield crawlerService.queue(result, 'immediate');
 
