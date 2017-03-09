@@ -8,7 +8,7 @@ const config = require('painless-config');
 const CrawlerService = require('ghcrawler').crawlerService;
 const express = require('express');
 const logger = require('morgan');
-const mockInsights = require('./providers/mockInsights');
+const mockInsights = require('./providers/logger/mockInsights');
 const CrawlerFactory = require('./lib/crawlerFactory');
 const sendHelper = require('./middleware/sendHelper');
 
