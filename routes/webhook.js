@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const bufferEqual = require('buffer-equal-constant-time');
 const crypto = require('crypto');
 const express = require('express');
 const moment = require('moment');
