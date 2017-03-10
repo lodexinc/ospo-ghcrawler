@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const limiter = require('./inmemoryRateLimiter');
+const limiter = require('../limiting/inmemoryRateLimiter');
 const NestedQueue = require('./nestedQueue');
 const Q = require('q');
 const qlimit = require('qlimit');

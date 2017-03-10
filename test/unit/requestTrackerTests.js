@@ -8,7 +8,7 @@ const extend = require('extend');
 const Q = require('q');
 const redlock = require('redlock');
 const Request = require('ghcrawler').request;
-const RequestTracker = require('../../lib/redisRequestTracker.js');
+const RequestTracker = require('../../providers/queuing/redisRequestTracker.js');
 const sinon = require('sinon');
 
 describe('NON Locking Request Tracker track', () => {
@@ -150,7 +150,7 @@ describe('Locking Request Tracker track', () => {
   it('should reject and not attempt tagging or call the operation if could not lock', () => {
     const redis = createRedisClient({ get: sinon.spy(() => { }), set: sinon.spy(() => { }) });
     const locker = createRedlock();
-    locker.lock = sinon.spy(() => {  throw new redlock.LockError('fail!'); });
+    locker.lock = sinon.spy(() => { throw new redlock.LockError('fail!'); });
     locker.unlock = sinon.spy(lock => { return Q(); });
     const tracker = createTracker('test', redis, locker);
     const request = new Request('org', 'http://test.com');
@@ -296,7 +296,7 @@ describe('Request Tracker untrack', () => {
   it('will reject and not remove the tag if locking fails', () => {
     const redis = createRedisClient({ del: sinon.spy((key, cb) => { cb(null); }) });
     const locker = createRedlock();
-    locker.lock = sinon.spy(() => {  throw new redlock.LockError('fail!'); });
+    locker.lock = sinon.spy(() => { throw new redlock.LockError('fail!'); });
     locker.unlock = sinon.spy(lock => { return Q(); });
     const tracker = createTracker('test', redis, locker);
     const request = new Request('org', 'http://test.com');
@@ -351,14 +351,14 @@ describe('Request Tracker untrack', () => {
         expect(redis.del.getCall(0).args[0].startsWith('test:')).to.be.true;
       },
       error =>
-          assert.fail()
+        assert.fail()
     );
   });
 });
 
 describe('Request Tracker concurrency', () => {
   it('should remove the tag having locked and unlocked', () => {
-      const getResponses = [null, 13];
+    const getResponses = [null, 13];
     const redis = createRedisClient({
       get: delaySpy((key, cb) => { cb(null, getResponses.shift()); }),
       set: delaySpy((values, cb) => { cb(null); }),
@@ -426,7 +426,7 @@ function delaySpy2(f, time = 2) {
   });
 }
 
-function createRedisClient({get = null, set = null, del = null} = {}) {
+function createRedisClient({ get = null, set = null, del = null } = {}) {
   const result = {};
   result.get = get || (() => assert.fail('should not lock'));
   result.set = set || (() => assert.fail('should not extend'));
@@ -434,7 +434,7 @@ function createRedisClient({get = null, set = null, del = null} = {}) {
   return result;
 }
 
-function createRedlock({lock = null, extend = null, unlock = null} = {}) {
+function createRedlock({ lock = null, extend = null, unlock = null } = {}) {
   const result = {};
   result.lock = lock || (() => assert.fail('should not lock'));
   result.extend = extend || (() => assert.fail('should not extend'));
@@ -464,7 +464,7 @@ function createOptions() {
   };
 }
 
-function createBaseLog({info = null, warn = null, error = null, verbose = null, silly = null} = {}) {
+function createBaseLog({ info = null, warn = null, error = null, verbose = null, silly = null } = {}) {
   const result = {};
   result.info = info || (() => { });
   result.warn = warn || (() => { });

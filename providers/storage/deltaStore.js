@@ -5,7 +5,7 @@ const moment = require('moment');
 const uuid = require('node-uuid');
 const Q = require('q');
 
-class LoggingStore {
+class DeltaStore {
   constructor(baseStore, blobService, name, options) {
     this.baseStore = baseStore;
     this.service = blobService;
@@ -106,4 +106,4 @@ class LoggingStore {
   }
 }
 
-module.exports = LoggingStore;
+module.exports = DeltaStore;

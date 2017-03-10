@@ -8,14 +8,14 @@ const config = require('painless-config');
 const CrawlerService = require('ghcrawler').crawlerService;
 const express = require('express');
 const logger = require('morgan');
-const mockInsights = require('./lib/mockInsights');
-const OspoCrawler = require('./lib/ospoCrawler');
+const mockInsights = require('./providers/logger/mockInsights');
+const CrawlerFactory = require('./lib/crawlerFactory');
 const sendHelper = require('./middleware/sendHelper');
 
 auth.initialize(config.get('CRAWLER_SERVICE_AUTH_TOKEN') || 'secret', config.get('CRAWLER_SERVICE_FORCE_AUTH'));
 mockInsights.setup(config.get('CRAWLER_INSIGHTS_KEY') || 'mock', true);
 const mode = config.get('CRAWLER_MODE') || '';
-const service = OspoCrawler.createService(mode);
+const service = CrawlerFactory.createService(mode);
 const app = express();
 
 app.use(logger('dev'));
