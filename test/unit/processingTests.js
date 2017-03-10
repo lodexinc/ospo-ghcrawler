@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 const expect = require('chai').expect;
-const OspoCrawler = require('../../lib/ospoCrawler');
+const CrawlerFactory = require('../../lib/crawlerFactory');
 const Q = require('q');
 const Request = require('ghcrawler').request;
 const sinon = require('sinon');
@@ -47,7 +47,7 @@ describe('Simple processing', () => {
 
 function processOne() {
   resetCrawlerSpies(crawler);
-  return crawler.processOne();
+  return crawler.processOne({ loopName: 'test' });
 }
 
 function checkDoc(type, urn, queuedCount) {
@@ -67,7 +67,7 @@ function gatherQueued(spy) {
 }
 
 function createCrawler() {
-  const service = OspoCrawler.createService('InMemory');
+  const service = CrawlerFactory.createService('InMemory');
   return service.ensureInitialized().then(() => {
     const crawler = service.crawler;
     crawler.options.orgList = null;
@@ -191,7 +191,7 @@ const resources = {
         "url": "https://api.github.com/orgs/test",
       }
     }
-  },  'https://api.github.com/repos/user2/repo2': {
+  }, 'https://api.github.com/repos/user2/repo2': {
     body: {
       "id": 11,
       "owner": {

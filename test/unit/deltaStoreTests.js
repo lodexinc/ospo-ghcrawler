@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 const expect = require('chai').expect;
-const LoggingStore = require('../../lib/loggingStore');
+const DeltaStore = require('../../providers/storage/deltaStore');
 const Q = require('q');
 const sinon = require('sinon');
 
@@ -31,12 +31,12 @@ describe('Logging Store', () => {
     let blobService = {
       createContainerIfNotExists: sinon.spy((name, cb) => { cb(null); })
     };
-    let loggingStore = new LoggingStore(baseStore, blobService, 'test');
+    let deltaStore = new DeltaStore(baseStore, blobService, 'test');
     return Q.all([
-      loggingStore.connect(),
-      loggingStore.get('test', 'test'),
-      loggingStore.etag('test', 'test'),
-      loggingStore.close()
+      deltaStore.connect(),
+      deltaStore.get('test', 'test'),
+      deltaStore.etag('test', 'test'),
+      deltaStore.close()
     ]).then(() => {
       expect(blobService.createContainerIfNotExists.callCount).to.be.equal(1);
       expect(baseStore.connect.callCount).to.be.equal(1);
@@ -52,17 +52,17 @@ describe('Logging Store', () => {
       createAppendBlobFromText: sinon.spy((name, blobName, text, cb) => { cb(); }),
       appendBlockFromText: sinon.spy((name, blobName, text, cb) => { cb(); })
     };
-    loggingStore = new LoggingStore(baseStore, blobService, 'test');
+    deltaStore = new DeltaStore(baseStore, blobService, 'test');
     const promises = [];
     for (let i = 0; i < 10; i++) {
-      promises.push(loggingStore.upsert({ test: true }));
+      promises.push(deltaStore.upsert({ test: true }));
     }
     return Q.all(promises).then(() => {
       expect(blobService.createAppendBlobFromText.callCount).to.be.equal(0);
       expect(blobService.appendBlockFromText.callCount).to.be.equal(10);
       expect(baseStore.upsert.callCount).to.be.equal(10);
-      expect(loggingStore.blobSequenceNumber).to.be.equal(1);
-      expect(loggingStore.name).to.be.equal('test');
+      expect(deltaStore.blobSequenceNumber).to.be.equal(1);
+      expect(deltaStore.name).to.be.equal('test');
     });
   });
 
@@ -72,12 +72,12 @@ describe('Logging Store', () => {
       createAppendBlobFromText: sinon.spy((name, blobName, text, cb) => { cb(); }),
       appendBlockFromText: sinon.spy((name, blobName, text, cb) => { cb(appendResponses.shift()); })
     };
-    loggingStore = new LoggingStore(baseStore, blobService, 'test');
-    return loggingStore.upsert({ test: true }).then(() => {
+    deltaStore = new DeltaStore(baseStore, blobService, 'test');
+    return deltaStore.upsert({ test: true }).then(() => {
       expect(blobService.createAppendBlobFromText.callCount).to.be.equal(1);
       expect(blobService.appendBlockFromText.callCount).to.be.above(1);
       expect(baseStore.upsert.callCount).to.be.equal(1);
-      expect(loggingStore.blobSequenceNumber).to.be.equal(1);
+      expect(deltaStore.blobSequenceNumber).to.be.equal(1);
     });
   });
 
@@ -87,12 +87,12 @@ describe('Logging Store', () => {
       createAppendBlobFromText: sinon.spy((name, blobName, text, cb) => { cb(); }),
       appendBlockFromText: sinon.spy((name, blobName, text, cb) => { cb(appendResponses.shift()); })
     };
-    loggingStore = new LoggingStore(baseStore, blobService, 'test');
-    return loggingStore.upsert({ test: true }).then(() => {
+    deltaStore = new DeltaStore(baseStore, blobService, 'test');
+    return deltaStore.upsert({ test: true }).then(() => {
       expect(blobService.createAppendBlobFromText.callCount).to.be.equal(1);
       expect(blobService.appendBlockFromText.callCount).to.be.above(1);
       expect(baseStore.upsert.callCount).to.be.equal(1);
-      expect(loggingStore.blobSequenceNumber).to.be.equal(2);
+      expect(deltaStore.blobSequenceNumber).to.be.equal(2);
     });
   });
 });

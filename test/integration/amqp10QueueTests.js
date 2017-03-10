@@ -1,10 +1,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const Amqp10Queue = require('../../lib/amqp10Queue');
+const Amqp10Queue = require('../../providers/queuing/amqp10Queue');
 const config = require('painless-config');
 const expect = require('chai').expect;
-const OspoCrawler = require('../../lib/ospoCrawler');
+const CrawlerFactory = require('../../lib/crawlerFactory');
 const Q = require('q');
 const Request = require('ghcrawler').request;
 
@@ -15,7 +15,7 @@ const formatter = message => {
   return message;
 };
 const options = {
-  logger: OspoCrawler.createLogger(true, 'silly'),
+  logger: CrawlerFactory.createLogger(true, 'silly'),
   queueName: 'ghcrawler',
   credit: 2,
   _config: { on: () => { } }
